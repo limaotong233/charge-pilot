@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闪充管理面板</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 顶部导航 -->
+    <header class="header">
+      <div class="logo">⚡ 闪充管理面板</div>
+      <div class="user-info">
+        <span id="adminName">管理员</span>
+        <button onclick="logout()" class="btn-text">退出</button>
+      </div>
+    </header>
+
+    <div class="main">
+      <!-- 左侧菜单 -->
+      <nav class="sidebar">
+        <a href="#" class="menu-item active" data-page="dashboard">📊 仪表盘</a>
+        <a href="#" class="menu-item" data-page="users">👥 用户管理</a>
+        <a href="#" class="menu-item" data-page="stations">🔋 充电站管理</a>
+        <a href="#" class="menu-item" data-page="orders">📋 订单管理</a>
+        <a href="#" class="menu-item" data-page="reservations">📅 预约管理</a>
+        <a href="#" class="menu-item" data-page="vouchers">🎫 代金券管理</a>
+        <a href="#" class="menu-item" data-page="collections">⭐ 收藏管理</a>
+      </nav>
+
+      <!-- 右侧内容区 -->
+      <main class="content" id="content">
+        <div class="loading">加载中...</div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 弹窗模板 -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modalTitle">标题</h3>
+        <button class="btn-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/admin.js"></script>
+</body>
+</html>
