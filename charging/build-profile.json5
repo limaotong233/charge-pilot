@@ -61,6 +61,10 @@
           {
             "name": "Safety Detect",
             "capability": "com.huawei.service.device_security.safety_detect"
+          },
+          {
+            "name": "Intents Kit",
+            "capability": "com.huawei.service.intentskit"
           }
         ]
       }
