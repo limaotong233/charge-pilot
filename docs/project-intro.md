@@ -2,9 +2,9 @@
 
 - 独立开发鸿蒙原生跨设备充电服务平台，基于 **ArkTS 声明式 UI** 构建，通过 **6 大 API 模块 + 6 个 Service 服务** 实现业务层解耦
 
-- 自建 **Node.js + Express + PostgreSQL** 后端替代原企业平台，基于 **Drizzle ORM** 实现类型安全持久化，设计 **9 张关联表**，通过 **PostgreSQL 排他约束** 防止预约时间冲突
+- 自建 **Node.js + Express + PostgreSQL** 后端，基于 **Drizzle ORM** 实现类型安全持久化，设计 **9 张关联表**，通过 **PostgreSQL 排他约束** 防止预约时间冲突
 
-- 基于 **JWT 无状态认证** 替代原 Cookie + CSRF 方案，实现登录/注册/Token 刷新全链路，统一 **ResultVO 响应封装** 与会话过期自动跳转
+- 基于 **JWT 无状态认证** 实现登录/注册/Token 刷新全链路，统一 **ResultVO 响应封装** 与会话过期自动跳转
 
 - 集成 **华为 MapKit 地图引擎**，实现充电站热力分布、路线规划导航与驾驶距离矩阵计算，支持 **distributedDataObject 跨设备续接**
 
