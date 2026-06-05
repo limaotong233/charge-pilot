@@ -261,19 +261,7 @@ export default class EntryAbility extends UIAbility {
 
   onDestroy(): void {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
-
-    // 退出应用时自动退出充电站
-    const recordId = AppStorage.get('stationAccessRecordId') as string
-    if (recordId && recordId !== '') {
-      enterLeave<string>({ id: recordId }).then(() => {
-        hilog.info(0x0000, 'testTag', '自动出站成功')
-        AppStorage.setOrCreate('stationAccessRecordId', '')
-        AppStorage.setOrCreate('continueMapBtnIsEnterSpot', '进入仿真充电站')
-        AppStorage.setOrCreate('continueCarStatus', '点击前往')
-      }).catch(() => {
-        hilog.info(0x0000, 'testTag', '自动出站失败')
-      })
-    }
+    // 不在退出时自动出站，下次启动时由 Index 页面检查并恢复状态
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {

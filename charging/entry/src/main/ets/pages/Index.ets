@@ -8,8 +8,12 @@ import { common, AbilityConstant } from '@kit.AbilityKit';
 import { LoadingCustomDialog } from '../components/loadingCustomDialog';
 import { LocalPreferences } from '../service/LocalPreferences';
 import { getUserInfo, getUserInfoImage } from '../api/LoginApi';
+import { enterDetail } from '../api/HomeApi';
+import { getOrderList } from '../api/OrderApi';
 import { buffer } from '@kit.ArkTS';
 import { userInfoReturning } from '../model/interface/api/LoginApiInterface';
+import { EnterDetailItem } from '../model/interface/api/HomeApiInterface';
+import { OrderListReturning } from '../model/interface/api/OrderApiInterface';
 import { useToastHook } from '../service';
 import { ResultVO } from '../utils/Http';
 
@@ -74,6 +78,44 @@ struct Index {
       this.accountImage = ''
       useToastHook(err.msg, '40lpx')
     })
+
+    // 启动时检查用户是否在充电站中
+    this.checkStationStatus()
+  }
+
+  // 检查用户是否在充电站，恢复状态
+  async checkStationStatus() {
+    try {
+      const record = await enterDetail<EnterDetailItem>({ stationId: '1' })
+      if (record) {
+        // 用户在充电站中，恢复状态
+        AppStorage.setOrCreate('stationAccessRecordId', record.id)
+        AppStorage.setOrCreate('continueMapBtnIsEnterSpot', '退出仿真充电站')
+
+        // 检查是否有进行中的充电订单
+        const orderRes = await getOrderList<OrderListReturning>({
+          currentPage: 1, pageSize: 1, orderStatus: 0
+        })
+        if (orderRes && orderRes.list && orderRes.list.length > 0) {
+          // 有进行中的订单，跳转充电页
+          const activeOrder = orderRes.list[0]
+          router.pushUrl({
+            url: 'pages/charging/inCharging',
+            params: {
+              orderId: activeOrder.orderId
+            }
+          })
+          return
+        }
+
+        // 没有进行中订单，但用户在站内 → 设置状态让地图显示仪表盘
+        AppStorage.setOrCreate('continueCarStatus', '已到达')
+        useToastHook('检测到您在充电站中', '32lpx')
+      }
+    } catch (e) {
+      // 查询失败不影响正常使用
+      console.info('启动检查进站状态', JSON.stringify(e))
+    }
   }
 
   onPageHide(): void {
