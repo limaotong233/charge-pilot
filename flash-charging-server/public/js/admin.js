@@ -130,9 +130,12 @@ async function renderDashboard(el) {
 
   // 订单状态分布
   const orderData = [
-    { label: '已完成', value: d.completedOrderCount, pct: d.orderCount ? (d.completedOrderCount / d.orderCount * 100) : 0, color: '#1a1a1a' },
-    { label: '进行中', value: Math.max(0, d.orderCount - d.completedOrderCount), pct: d.orderCount ? ((d.orderCount - d.completedOrderCount) / d.orderCount * 100) : 0, color: '#bbb' },
+    { label: '已完成', value: d.completedOrderCount, pct: d.orderCount ? (d.completedOrderCount / d.orderCount * 100) : 0, color: '#4f6ef7' },
+    { label: '进行中', value: Math.max(0, d.orderCount - d.completedOrderCount), pct: d.orderCount ? ((d.orderCount - d.completedOrderCount) / d.orderCount * 100) : 0, color: '#e5e7eb' },
   ]
+
+  // 柱状图渐变色
+  const barColors = ['#c7d2fe', '#a5b4fc', '#818cf8', '#6366f1', '#4f6ef7', '#4338ca']
 
   el.innerHTML = `
     <div class="page-title">数据概览</div>
@@ -140,14 +143,14 @@ async function renderDashboard(el) {
       <div class="stat-card"><div class="label">注册用户</div><div class="value">${d.userCount}</div></div>
       <div class="stat-card"><div class="label">充电站</div><div class="value">${d.stationCount}</div></div>
       <div class="stat-card"><div class="label">完成订单</div><div class="value">${d.completedOrderCount}</div><div class="sub">共 ${d.totalCapacity} kWh</div></div>
-      <div class="stat-card"><div class="label">总收入</div><div class="value">${d.totalAmount.toFixed(2)}<span style="font-size:14px;font-weight:400;color:#999;margin-left:2px">元</span></div></div>
+      <div class="stat-card"><div class="label">总收入</div><div class="value">${d.totalAmount.toFixed(2)}<span style="font-size:14px;font-weight:400;color:#9ca3af;margin-left:2px">元</span></div></div>
     </div>
 
     <div class="chart-row">
       <div class="chart-card">
         <div class="chart-title">充电量趋势（近6月）</div>
-        ${barChart(months.map((m, i) => ({ label: m, value: trendData[i], color: i === months.length - 1 ? '#1a1a1a' : '#d4d4d4' })))}
-        <div class="mini-chart">${miniSparkline(trendData, '#1a1a1a')}</div>
+        ${barChart(months.map((m, i) => ({ label: m, value: trendData[i], color: barColors[i] })))}
+        <div class="mini-chart">${miniSparkline(trendData, '#4f6ef7')}</div>
       </div>
       <div class="chart-card">
         <div class="chart-title">订单状态</div>
@@ -170,8 +173,8 @@ async function renderDashboard(el) {
         <div class="donut-chart">
           <div class="donut-wrap">
             <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="50" stroke="#f0f0f0" stroke-width="10" fill="none"/>
-              <circle cx="60" cy="60" r="50" stroke="#1a1a1a" stroke-width="10" fill="none"
+              <circle cx="60" cy="60" r="50" stroke="#f3f4f6" stroke-width="10" fill="none"/>
+              <circle cx="60" cy="60" r="50" stroke="#22c55e" stroke-width="10" fill="none"
                 stroke-dasharray="${Math.min(d.stationCount * 10, 314)} ${314 - Math.min(d.stationCount * 10, 314)}"
                 transform="rotate(-90 60 60)"/>
             </svg>
@@ -210,7 +213,7 @@ function editUser(id, name) {
   openModal('编辑用户', `
     <div class="form-group"><label>用户名</label><input id="editUserName" value="${name}"></div>
     <div class="form-group"><label>重置密码（留空不修改）</label><input id="editUserPwd" type="password" placeholder="新密码"></div>
-  `, `<button class="btn btn-dark" onclick="saveUser('${id}')">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
+  `, `<button class="btn btn-primary" onclick="saveUser('${id}')">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
 }
 
 async function saveUser(id) {
@@ -263,7 +266,7 @@ function addStation() {
     <div class="form-group"><label>经度</label><input id="sLng" type="number" step="0.0001" value="126.65"></div>
     <div class="form-group"><label>服务商</label><input id="sProvider" value="国网充电"></div>
     <div class="form-group"><label>营业时间</label><input id="sOpenTime" value="00:00-24:00"></div>
-  `, `<button class="btn btn-dark" onclick="saveNewStation()">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
+  `, `<button class="btn btn-primary" onclick="saveNewStation()">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
 }
 
 async function saveNewStation() {
@@ -288,7 +291,7 @@ async function editStation(id) {
     <div class="form-group"><label>功率（kW）</label><input id="sPower" type="number" step="0.01" value="${s.chargePower}"></div>
     <div class="form-group"><label>服务商</label><input id="sProvider" value="${s.serviceProvider||''}"></div>
     <div class="form-group"><label>营业时间</label><input id="sOpenTime" value="${s.openTime||''}"></div>
-  `, `<button class="btn btn-dark" onclick="saveEditStation('${id}')">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
+  `, `<button class="btn btn-primary" onclick="saveEditStation('${id}')">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
 }
 
 async function saveEditStation(id) {
@@ -321,7 +324,7 @@ async function addPort(stationId) {
     <div class="form-group"><label>桩口名称</label><input id="pName" value="1号桩"></div>
     <div class="form-group"><label>电费（元/度）</label><input id="pFee" type="number" step="0.01" value="1.20"></div>
     <div class="form-group"><label>功率（kW）</label><input id="pPower" type="number" step="0.01" value="120"></div>
-  `, `<button class="btn btn-dark" onclick="saveNewPort('${stationId}')">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
+  `, `<button class="btn btn-primary" onclick="saveNewPort('${stationId}')">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
 }
 
 async function saveNewPort(stationId) {
@@ -402,7 +405,7 @@ function addVoucher() {
     <div class="form-group"><label>类型名称</label><input id="vType" value="新用户专享"></div>
     <div class="form-group"><label>面值（元）</label><input id="vValue" type="number" step="0.01" value="10.00"></div>
     <div class="form-group"><label>发放总量</label><input id="vTotal" type="number" value="100"></div>
-  `, `<button class="btn btn-dark" onclick="saveNewVoucher()">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
+  `, `<button class="btn btn-primary" onclick="saveNewVoucher()">保存</button><button class="btn" onclick="closeModal()">取消</button>`)
 }
 
 async function saveNewVoucher() {
