@@ -1,0 +1,28 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/home/homeSearch",
+    "pages/home/siteSearch",
+    "pages/charging/inCharging",
+    "pages/order/orderInfo",
+    "pages/order/orderEnd",
+    "pages/order/orderList",
+    "pages/routePlanning/index",
+    "pages/routePlanning/routeSearch",
+    "pages/routePlanning/planningLineMap",
+    "pages/siteCollection/collectSpots",
+    "pages/siteCollection/siteInfo",
+    "pages/cardCoupons/index",
+    "pages/advanceCharging/index",
+    "pages/user/accountManage",
+    "pages/login/index",
+    "pages/register/index",
+    "pages/analytics/index",
+    "pages/tutorial/index",
+    "pages/BackgroundVoice"
+  ],
+  "window": {
+    "designWidth": 360,
+    "autoDesignWidth": true
+  }
+}

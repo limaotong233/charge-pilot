@@ -1,0 +1,40 @@
+# ==================== 系统/IDE ====================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# ==================== Claude Code / Agent 配置 ====================
+.agents/
+.claude/
+.qoder/
+skills-lock.json
+
+# ==================== Node.js ====================
+node_modules/
+npm-debug.log*
+
+# ==================== 后端构建产物 ====================
+flash-charging-server/dist/
+flash-charging-server/uploads/*
+!flash-charging-server/uploads/.gitkeep
+
+# ==================== 环境变量（含密码） ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== HarmonyOS 构建产物 ====================
+**/oh_modules/
+**/build/
+**/.hvigor/
+**/local.properties
+**/oh-package-lock.json5
+
+# ==================== 杂项 ====================
+nul
+*.log
+package-lock.json

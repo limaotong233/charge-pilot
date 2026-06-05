@@ -1,0 +1,52 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "鸿蒙智能充电"
+    },
+    {
+      "name": "location_permission",
+      "value": "使用应用时需要获取您的位置,否则地图无法获取定位"
+    },
+    {
+      "name": "approximately_location_permission",
+      "value": "使用应用时需要获取您的模糊位置,否则地图无法获取定位"
+    },
+    {
+      "name": "camera_permission",
+      "value": "使用应用时需要获取您的摄像头权限,否则应用无法拍照"
+    },
+    {
+      "name": "microphone_permission",
+      "value": "使用应用时需要获取您的录音权限,否则应用无法录音"
+    },
+    {
+      "name": "keep_background_running",
+      "value": "应用需要申请后台运行语音播报,否则播报失败"
+    },
+    {
+      "name": "EntryFormAbility_desc",
+      "value": "form_description"
+    },
+    {
+      "name": "EntryFormAbility_label",
+      "value": "form_label"
+    },
+    {
+      "name": "widget_desc",
+      "value": "万物互联充电卡片"
+    },
+    {
+      "name": "widget_display_name",
+      "value": "充电卡片"
+    }
+  ]
+}
