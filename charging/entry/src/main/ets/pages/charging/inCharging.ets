@@ -285,6 +285,7 @@ export struct InCharging {
   }
 
   async onPageShow() {
+    this.pageLoading = true
     this.notificationEnable()
     if (this.routeParams['stationId']) {
       if (this.routeParams['orderId'] as string || '') {
