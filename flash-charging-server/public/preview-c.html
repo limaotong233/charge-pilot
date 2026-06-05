@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>方案C - 商务蓝</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b;font-size:14px;line-height:1.6}
+
+/* 顶栏 */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff}
+.topbar h1{font-size:16px;font-weight:600;letter-spacing:0.3px}
+.topbar-right{display:flex;align-items:center;gap:14px;font-size:13px;opacity:.8}
+
+/* 布局 */
+.layout{display:flex;height:calc(100vh - 54px)}
+.nav{width:210px;background:#fff;box-shadow:2px 0 8px rgba(0,0,0,.04);padding:14px 0;flex-shrink:0}
+.nav a{display:flex;align-items:center;gap:10px;padding:10px 22px;color:#64748b;text-decoration:none;font-size:13.5px;transition:all .15s;border-left:3px solid transparent}
+.nav a:hover{color:#1e3a5f;background:#f8fafc}
+.nav a.active{color:#2563eb;font-weight:500;background:#eff6ff;border-left-color:#2563eb}
+.main{flex:1;padding:24px 28px;overflow-y:auto}
+
+/* 统计卡片 */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.card{background:#fff;border-radius:10px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card .label{font-size:12.5px;color:#94a3b8;margin-bottom:8px}
+.card .value{font-size:26px;font-weight:700;color:#1e293b}
+.card .sub{font-size:12px;color:#94a3b8;margin-top:2px}
+.card-blue{border-top:3px solid #2563eb}
+
+/* 表格 */
+.section-title{font-size:15px;font-weight:600;margin-bottom:14px;color:#1e293b}
+.table-card{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.toolbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #f1f5f9}
+.search{display:flex;gap:8px}
+.search input{padding:7px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;width:220px;outline:none;transition:border .15s}
+.search input:focus{border-color:#93c5fd;box-shadow:0 0 0 2px rgba(37,99,235,.1)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 18px;font-size:12px;font-weight:500;color:#64748b;border-bottom:2px solid #f1f5f9;background:#fafbfc}
+td{padding:11px 18px;font-size:13px;border-bottom:1px solid #f8fafc;color:#334155}
+tr:hover td{background:#f8fafc}
+
+/* 按钮 */
+.btn{padding:6px 14px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;cursor:pointer;font-size:12.5px;color:#475569;transition:all .15s}
+.btn:hover{border-color:#cbd5e1;background:#f8fafc}
+.btn-blue{background:#2563eb;color:#fff;border-color:#2563eb}
+.btn-blue:hover{background:#3b82f6}
+.btn-red{color:#dc2626;border-color:#fca5a5}
+.btn-red:hover{background:#fef2f2}
+.btn-sm{padding:4px 10px;font-size:12px}
+
+/* 标签 */
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11.5px;font-weight:500}
+.tag-green{background:#dcfce7;color:#16a34a}
+.tag-amber{background:#fef3c7;color:#d97706}
+.tag-blue{background:#dbeafe;color:#2563eb}
+.tag-red{background:#fee2e2;color:#dc2626}
+
+/* 分页 */
+.pager{display:flex;justify-content:center;align-items:center;gap:12px;padding:14px;font-size:13px;color:#94a3b8}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>闪充管理平台</h1>
+  <div class="topbar-right"><span>admin</span><span style="cursor:pointer">退出</span></div>
+</div>
+<div class="layout">
+  <nav class="nav">
+    <a href="#" class="active">概览</a>
+    <a href="#">用户</a>
+    <a href="#">充电站</a>
+    <a href="#">订单</a>
+    <a href="#">预约</a>
+    <a href="#">代金券</a>
+    <a href="#">收藏</a>
+  </nav>
+  <div class="main">
+    <div class="stats">
+      <div class="card card-blue"><div class="label">注册用户</div><div class="value">2</div></div>
+      <div class="card"><div class="label">充电站</div><div class="value">11</div></div>
+      <div class="card"><div class="label">完成订单</div><div class="value">0</div></div>
+      <div class="card"><div class="label">总收入</div><div class="value">0.00<div class="sub">元</div></div></div>
+    </div>
+
+    <div class="section-title">订单</div>
+    <div class="table-card">
+      <div class="toolbar">
+        <div class="search"><input placeholder="搜索订单号..."><button class="btn">搜索</button></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm">全部</button>
+          <button class="btn btn-sm">进行中</button>
+          <button class="btn btn-sm">待支付</button>
+          <button class="btn btn-sm">已完成</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>订单号</th><th>充电站</th><th>电量</th><th>金额</th><th>状态</th><th>时间</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:monospace;font-size:12px">OC20260501A1B2</td><td>哈尔滨市道里区中央大街充电站</td><td>32.50 kWh</td><td>39.00</td><td><span class="tag tag-green">已完成</span></td><td>2026-05-01 14:30</td></tr>
+          <tr><td style="font-family:monospace;font-size:12px">OC20260502C3D4</td><td>哈尔滨市南岗区哈工大充电站</td><td>18.20 kWh</td><td>27.30</td><td><span class="tag tag-amber">待支付</span></td><td>2026-05-02 09:15</td></tr>
+          <tr><td style="font-family:monospace;font-size:12px">OC20260503E5F6</td><td>哈尔滨市松北区超级充电站</td><td>45.00 kWh</td><td>81.00</td><td><span class="tag tag-blue">进行中</span></td><td>2026-05-03 16:45</td></tr>
+        </tbody>
+      </table>
+      <div class="pager"><button class="btn btn-sm" disabled>上一页</button><span>第 1 / 1 页</span><button class="btn btn-sm" disabled>下一页</button></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

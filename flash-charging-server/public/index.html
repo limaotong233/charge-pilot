@@ -3,45 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>闪充管理面板</title>
+  <title>闪充管理平台</title>
   <link rel="stylesheet" href="/admin/css/admin.css">
 </head>
 <body>
   <div class="app">
-    <!-- 顶部导航 -->
     <header class="header">
-      <div class="logo">⚡ 闪充管理面板</div>
+      <div class="logo">闪充管理平台</div>
       <div class="user-info">
-        <span id="adminName">管理员</span>
-        <button onclick="logout()" class="btn-text">退出</button>
+        <span>admin</span>
+        <button class="btn-text" onclick="logout()">退出</button>
       </div>
     </header>
 
     <div class="main">
-      <!-- 左侧菜单 -->
-      <nav class="sidebar">
-        <a href="#" class="menu-item active" data-page="dashboard">📊 仪表盘</a>
-        <a href="#" class="menu-item" data-page="users">👥 用户管理</a>
-        <a href="#" class="menu-item" data-page="stations">🔋 充电站管理</a>
-        <a href="#" class="menu-item" data-page="orders">📋 订单管理</a>
-        <a href="#" class="menu-item" data-page="reservations">📅 预约管理</a>
-        <a href="#" class="menu-item" data-page="vouchers">🎫 代金券管理</a>
-        <a href="#" class="menu-item" data-page="collections">⭐ 收藏管理</a>
+      <nav class="sidebar" id="sidebar">
+        <a class="menu-item active" data-page="dashboard"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg></span>概览</a>
+        <a class="menu-item" data-page="users"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>用户</a>
+        <a class="menu-item" data-page="stations"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M6 7h4M8 5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>充电站</a>
+        <a class="menu-item" data-page="orders"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10v12l-5-3-5 3V2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span>订单</a>
+        <a class="menu-item" data-page="reservations"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>预约</a>
+        <a class="menu-item" data-page="vouchers"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 4h14v3c-1.5 0-3 1.5-3 3s1.5 3 3 3v2H1V4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="5" cy="8" r="1" fill="currentColor"/></svg></span>代金券</a>
+        <a class="menu-item" data-page="collections"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l2 4 4.5.7-3.2 3.1.8 4.5L8 12l-4.1 2.3.8-4.5L1.5 6.7 6 6l2-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span>收藏</a>
       </nav>
 
-      <!-- 右侧内容区 -->
       <main class="content" id="content">
         <div class="loading">加载中...</div>
       </main>
     </div>
   </div>
 
-  <!-- 弹窗模板 -->
   <div class="modal-overlay" id="modalOverlay" style="display:none" onclick="closeModal()">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h3 id="modalTitle">标题</h3>
-        <button class="btn-close" onclick="closeModal()">✕</button>
+        <h3 id="modalTitle"></h3>
+        <button class="btn-close" onclick="closeModal()">&times;</button>
       </div>
       <div class="modal-body" id="modalBody"></div>
       <div class="modal-footer" id="modalFooter"></div>
