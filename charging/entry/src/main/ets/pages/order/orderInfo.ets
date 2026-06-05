@@ -297,9 +297,9 @@ export struct OrderInfo {
           .margin({ bottom: '16lpx' })
       }
 
-      // 支付弹窗（直接实现，避免 BottomDialog 兼容问题）
+      // 支付弹窗
       if (this.isShowMarkLayer) {
-        Column() {
+        Stack({ alignContent: Alignment.BottomStart }) {
           // 半透明遮罩
           Column()
             .width('100%')
@@ -309,7 +309,7 @@ export struct OrderInfo {
               this.isShowMarkLayer = false
             })
 
-          // 弹窗内容
+          // 弹窗内容（底部弹出）
           Column() {
             // 标题栏
             Row() {
@@ -364,7 +364,7 @@ export struct OrderInfo {
                 .fontSize('14lpx')
             }
             .width('100%')
-            .padding({ left: '16lpx', right: '16lpx', top: '12lpx', bottom: '12lpx' })
+            .padding({ left: '16lpx', right: '16lpx', top: '12lpx', bottom: '20lpx' })
 
             // 确认支付按钮
             LongBtnComponent({
@@ -378,7 +378,7 @@ export struct OrderInfo {
             })
           }
           .width('100%')
-          .padding({ top: '16lpx', bottom: '24lpx' })
+          .padding({ top: '16lpx', left: '4lpx', right: '4lpx', bottom: '24lpx' })
           .borderRadius({ topLeft: '16lpx', topRight: '16lpx' })
           .backgroundColor($r('app.color.background_color_over'))
         }
