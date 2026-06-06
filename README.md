@@ -2,6 +2,14 @@
 
 鸿蒙原生电动汽车充电服务平台，包含 HarmonyOS NEXT 客户端和自建后端服务。
 
+![image-20260606195235100](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195235100.png)![image-20260606195237932](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195237932.png)![image-20260606195407479](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195407479.png)![image-20260606195439361](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195439361.png)![image-20260606195523049](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195523049.png![image-20260606195534755](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195534755.png
+
+
+
+
+
+
+
 ## 项目结构
 
 ```
@@ -152,6 +160,30 @@ hvigorw assembleHap -p module=entry    # 构建 HAP 包
 - **管理面板** — Web 端 CRUD 管理（极简白风格 + 数据图表）
 - **充电模拟** — 后端驱动 SOC 递增，支持变速（加速模拟约1分钟充满）
 - **RESTful API** — 30+ 端点，统一 ResultVO 响应格式
+
+## 页面说明
+
+| 页面 | 路径 | 说明 |
+|------|------|------|
+| 首页地图 | `pages/Index` | 主页，集成 MapKit 地图展示充电站标记，底部 Tab 导航（首页/我的），支持 sm/md 响应式断点 |
+| 站点搜索 | `pages/home/homeSearch` | 关键词搜索充电站，支持综合/距离/价格排序，搜索历史记录，常去站点和收藏站点 Tab |
+| 站点详情搜索 | `pages/home/siteSearch` | 按区域搜索站点，收藏站点管理 |
+| 充电中 | `pages/charging/inCharging` | 充电进度页面，环形进度条（SOC%），实时数据面板（功率/已充/单价），加速模拟按钮，TTS 语音播报设置 |
+| 订单列表 | `pages/order/orderList` | 分页懒加载订单，全部/待支付/已完成三 Tab 筛选 |
+| 订单详情 | `pages/order/orderInfo` | 充电信息（时间/SOC/电量）+ 费用信息，待支付时弹出支付确认弹窗 |
+| 支付成功 | `pages/order/orderEnd` | 支付结果展示（金额/代金券抵扣） |
+| 路线规划 | `pages/routePlanning/index` | 起终点输入，MapKit 驾驶路线规划 |
+| 路线搜索 | `pages/routePlanning/routeSearch` | 搜索起终点地点 |
+| 路线地图 | `pages/routePlanning/planningLineMap` | 路线地图展示，沿途充电站标记 |
+| 收藏列表 | `pages/siteCollection/collectSpots` | 用户收藏的充电站列表，支持搜索和取消收藏 |
+| 站点详情 | `pages/siteCollection/siteInfo` | 充电站详细信息（桩口/价格/营业时间/服务商） |
+| 代金券 | `pages/cardCoupons/index` | 代金券列表，领取和查看可用券 |
+| 预约充电 | `pages/advanceCharging/index` | 绑定桩口、设置预约时段和 SOC 目标值，桌面卡片同步展示 |
+| 账号管理 | `pages/user/accountManage` | 个人信息展示，退出登录 |
+| 登录 | `pages/login/index` | 账号密码登录，JWT 自动登录检测 |
+| 注册 | `pages/register/index` | 新用户注册（账号+昵称+密码），注册后自动登录 |
+| 充电统计 | `pages/analytics/index` | 数据看板：总充电量/消费/次数/碳减排，月度趋势柱状图，常去站点 TOP5 |
+| 使用教程 | `pages/tutorial/index` | 5 步图文使用引导 |
 
 ## 认证流程
 
