@@ -3,14 +3,14 @@ import { sql } from 'drizzle-orm'
 import { db } from './config/database'
 import { pool } from './config/database'
 import {
-  users, files, stations, ports, vouchers,
+  users, files, stations, ports, vouchers, orders, collections,
 } from './models/schema'
 import { hashPassword } from './utils/password'
 
 async function seed() {
   console.log('开始填充种子数据...')
 
-  // ============ 0. 清空旧数据（按外键依赖顺序） ============
+  // ============ 0. 清空旧数据 ============
   await db.execute(sql`TRUNCATE TABLE user_vouchers, vouchers, collections, reservations, orders, station_access_records, port_bindings, ports, stations, files, users RESTART IDENTITY CASCADE`)
   console.log('旧数据已清空')
 
@@ -18,18 +18,14 @@ async function seed() {
   const passwordHash = await hashPassword('123456')
 
   const [user1] = await db.insert(users).values({
-    account: 'admin',
-    passwordHash,
-    userName: '管理员',
+    account: 'admin', passwordHash, userName: '管理员',
   }).returning({ id: users.id })
 
   const [user2] = await db.insert(users).values({
-    account: 'test',
-    passwordHash,
-    userName: '测试用户',
+    account: 'test', passwordHash, userName: '测试用户',
   }).returning({ id: users.id })
 
-  console.log(`创建用户: admin, test (密码: 123456)`)
+  console.log('创建用户: admin, test (密码: 123456)')
 
   // ============ 2. 创建充电站 ============
   const stationData = [
@@ -75,10 +71,78 @@ async function seed() {
     }
   }
 
-  await db.insert(ports).values(portData)
-  console.log(`创建 ${portData.length} 个充电桩`)
+  const insertedPorts = await db.insert(ports).values(portData).returning({
+    id: ports.id, stationId: ports.stationId, portName: ports.portName, chargeFee: ports.chargeFee,
+  })
+  console.log(`创建 ${insertedPorts.length} 个充电桩`)
 
-  // ============ 4. 创建代金券 ============
+  // ============ 4. 创建近6个月充电订单 ============
+  const now = new Date()
+  const orderList: Array<{
+    orderNo: string; userId: string; stationId: string; stationName: string;
+    portId: string; portName: string; isReserve: number; orderStatus: number;
+    orderAmount: string; chargeCapacity: string; chargePower: string; chargeFee: string;
+    chargeTime: number; soc: number; initialValue: number; userName: string;
+    startTime: Date; endTime: Date; payTime: Date | null;
+  }> = []
+
+  const userIds = [user1.id, user2.id]
+  const userNames = ['管理员', '测试用户']
+
+  // 生成近6个月的订单数据
+  for (let monthOffset = 5; monthOffset >= 0; monthOffset--) {
+    // 每月生成 5-8 个订单
+    const orderCount = 5 + Math.floor(Math.random() * 4)
+    for (let i = 0; i < orderCount; i++) {
+      const userIdx = Math.floor(Math.random() * 2)
+      const stationIdx = Math.floor(Math.random() * insertedStations.length)
+      const station = insertedStations[stationIdx]
+      const stationInfo = stationData[stationIdx]
+      const portIdx = Math.floor(Math.random() * 3)
+      const port = insertedPorts.filter(p => p.stationId === station.id)[portIdx] || insertedPorts[0]
+
+      // 随机日期（该月内）
+      const day = 1 + Math.floor(Math.random() * 27)
+      const hour = 6 + Math.floor(Math.random() * 16)
+      const startTime = new Date(2026, monthOffset, day, hour, Math.floor(Math.random() * 60))
+
+      // 充电参数
+      const initialValue = 15 + Math.floor(Math.random() * 30)
+      const endSoc = 70 + Math.floor(Math.random() * 31)
+      const chargeCapacity = ((endSoc - initialValue) / 100 * 60)
+      const chargeFee = parseFloat(stationInfo.chargeFee)
+      const chargeTime = Math.round(chargeCapacity / parseFloat(stationInfo.chargePower) * 3600)
+      const endTime = new Date(startTime.getTime() + chargeTime * 1000)
+      const orderAmount = chargeCapacity * chargeFee
+
+      orderList.push({
+        orderNo: `OC${startTime.getFullYear()}${String(startTime.getMonth()+1).padStart(2,'0')}${String(startTime.getDate()).padStart(2,'0')}${String.fromCharCode(65+i)}${Math.random().toString(36).substring(2,4).toUpperCase()}`,
+        userId: userIds[userIdx],
+        stationId: station.id,
+        stationName: station.stationName,
+        portId: port.id,
+        portName: port.portName,
+        isReserve: Math.random() > 0.7 ? 1 : 0,
+        orderStatus: 2,
+        orderAmount: orderAmount.toFixed(2),
+        chargeCapacity: chargeCapacity.toFixed(4),
+        chargePower: stationInfo.chargePower,
+        chargeFee: stationInfo.chargeFee,
+        chargeTime,
+        soc: endSoc,
+        initialValue,
+        userName: userNames[userIdx],
+        startTime,
+        endTime,
+        payTime: endTime,
+      })
+    }
+  }
+
+  await db.insert(orders).values(orderList)
+  console.log(`创建 ${orderList.length} 个充电订单（近6个月）`)
+
+  // ============ 5. 创建代金券 ============
   const voucherData = [
     { voucherType: '新用户专享', voucherValue: '10.00', totalNum: 100, usedNum: 23 },
     { voucherType: '满50减5', voucherValue: '5.00', totalNum: 200, usedNum: 89 },
@@ -89,6 +153,17 @@ async function seed() {
 
   await db.insert(vouchers).values(voucherData)
   console.log(`创建 ${voucherData.length} 个代金券`)
+
+  // ============ 6. 创建收藏记录 ============
+  const collectData = [
+    { userId: user1.id, stationId: insertedStations[0].id },
+    { userId: user1.id, stationId: insertedStations[3].id },
+    { userId: user1.id, stationId: insertedStations[8].id },
+    { userId: user2.id, stationId: insertedStations[1].id },
+    { userId: user2.id, stationId: insertedStations[5].id },
+  ]
+  await db.insert(collections).values(collectData)
+  console.log(`创建 ${collectData.length} 条收藏记录`)
 
   console.log('种子数据填充完成!')
   await pool.end()
