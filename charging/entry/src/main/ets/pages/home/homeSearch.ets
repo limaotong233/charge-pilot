@@ -39,6 +39,7 @@ export struct HomeSearch {
   @State lazyLoading: boolean = false
   @State allLoaded: boolean = false
   @State currentPage: number = 1
+  @State sortBy: string = 'comprehensive'
 
   async onChangeTabName() {
     if (this.tabName === '收藏站点') {
@@ -142,17 +143,41 @@ export struct HomeSearch {
     console.info('接口 常去', JSON.stringify(this.oftenGOList))
   }
 
+  // 切换排序方式
+  onChangeSort(sortType: string) {
+    if (this.sortBy === sortType) return
+    this.sortBy = sortType
+    this.currentPage = 1
+    this.allLoaded = false
+    this.lazyLoading = false
+    this.searchStationList = []
+    this.getStationListPort()
+  }
+
   // 获取充电站列表
   async getStationListPort() {
     if (this.lazyLoading || this.allLoaded) {
       return
     }
     this.lazyLoading = true
+
+    // 获取用户位置（用于距离排序）
+    let userLat: number | null = null
+    let userLng: number | null = null
+    let startTarget = AppStorage.get('continueStartTarget') as Record<string, number>
+    if (startTarget && startTarget.latitude) {
+      userLat = startTarget.latitude
+      userLng = startTarget.longitude
+    }
+
     let t: StationListVO = {
       currentPage: this.currentPage,
       pageSize: 5,
       stationName: this.keyWord,
-      chargeType: null
+      chargeType: null,
+      sortBy: this.sortBy,
+      latitude: userLat,
+      longitude: userLng
     }
     try {
       let res = await getStationList<StationListReturning>(t)
@@ -417,6 +442,38 @@ export struct HomeSearch {
           .backgroundColor($r('app.color.background_color_over'))
           .width('100%')
           .zIndex(1)
+
+          // 排序选项
+          Row() {
+            Text('综合')
+              .fontSize('12lpx')
+              .fontColor(this.sortBy === 'comprehensive' ? '#2196F3' : '#999999')
+              .fontWeight(this.sortBy === 'comprehensive' ? FontWeight.Medium : FontWeight.Normal)
+              .padding({ left: '12lpx', right: '12lpx', top: '6lpx', bottom: '6lpx' })
+              .backgroundColor(this.sortBy === 'comprehensive' ? 'rgba(33, 150, 243, 0.08)' : 'transparent')
+              .borderRadius('14lpx')
+              .onClick(() => { this.onChangeSort('comprehensive') })
+
+            Text('距离优先')
+              .fontSize('12lpx')
+              .fontColor(this.sortBy === 'distance' ? '#2196F3' : '#999999')
+              .fontWeight(this.sortBy === 'distance' ? FontWeight.Medium : FontWeight.Normal)
+              .padding({ left: '12lpx', right: '12lpx', top: '6lpx', bottom: '6lpx' })
+              .backgroundColor(this.sortBy === 'distance' ? 'rgba(33, 150, 243, 0.08)' : 'transparent')
+              .borderRadius('14lpx')
+              .onClick(() => { this.onChangeSort('distance') })
+
+            Text('价格优先')
+              .fontSize('12lpx')
+              .fontColor(this.sortBy === 'price' ? '#2196F3' : '#999999')
+              .fontWeight(this.sortBy === 'price' ? FontWeight.Medium : FontWeight.Normal)
+              .padding({ left: '12lpx', right: '12lpx', top: '6lpx', bottom: '6lpx' })
+              .backgroundColor(this.sortBy === 'price' ? 'rgba(33, 150, 243, 0.08)' : 'transparent')
+              .borderRadius('14lpx')
+              .onClick(() => { this.onChangeSort('price') })
+          }
+          .width('100%')
+          .padding({ left: '16lpx', right: '16lpx', top: '8lpx', bottom: '4lpx' })
 
           //长列表
           ListColumn({

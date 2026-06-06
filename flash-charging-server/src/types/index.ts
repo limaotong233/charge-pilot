@@ -37,6 +37,9 @@ export interface UserInfoResult {
 export interface StationListBody extends PaginatedBody {
   stationName: string
   chargeType: number | null
+  sortBy: string | null
+  latitude: number | null
+  longitude: number | null
 }
 
 export interface StationDetailBody {

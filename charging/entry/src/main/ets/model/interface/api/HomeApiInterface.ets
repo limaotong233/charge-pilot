@@ -2,7 +2,10 @@ export interface StationListVO {
   currentPage: number,
   pageSize: number,
   stationName: string,
-  chargeType: number | null // 0 1
+  chargeType: number | null,
+  sortBy: string | null,
+  latitude: number | null,
+  longitude: number | null
 }
 
 export interface StationListReturning {

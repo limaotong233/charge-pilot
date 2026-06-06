@@ -265,7 +265,10 @@ export struct HomeMap {
       currentPage: this.currentPage,
       pageSize: this.params ? 1000 : 250,
       stationName: '',
-      chargeType: this.chargeType === '慢充' ? 0 : this.chargeType === '快充' ? 1 : null
+      chargeType: this.chargeType === '慢充' ? 0 : this.chargeType === '快充' ? 1 : null,
+      sortBy: null,
+      latitude: null,
+      longitude: null
     }
     this.siteLoading = true
     let res = await getStationList<StationListReturning>(t)

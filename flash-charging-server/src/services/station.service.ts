@@ -1,6 +1,6 @@
 import { db } from '../config/database'
 import { stations, ports, collections } from '../models/schema'
-import { eq, and, like, sql, desc, inArray } from 'drizzle-orm'
+import { eq, and, like, sql, desc, asc, inArray } from 'drizzle-orm'
 import { getPagination, PaginatedResult } from '../utils/pagination'
 import {
   StationListBody, StationListItem, StationDetailItem,
@@ -28,6 +28,26 @@ export class StationService {
       .from(stations)
       .where(whereClause)
 
+    // 动态排序
+    let orderByClause: ReturnType<typeof desc>
+    const sortBy = body.sortBy || 'comprehensive'
+
+    if (sortBy === 'distance' && body.latitude !== null && body.longitude !== null) {
+      // Haversine 公式计算距离（km），按距离升序
+      const userLat = body.latitude
+      const userLng = body.longitude
+      orderByClause = sql`2 * 6371 * asin(sqrt(
+        power(sin(radians(${stations.latitude} - ${userLat}) / 2), 2) +
+        cos(radians(${userLat})) * cos(radians(${stations.latitude})) *
+        power(sin(radians(${stations.longitude} - ${userLng}) / 2), 2)
+      ))` as ReturnType<typeof desc>
+    } else if (sortBy === 'price') {
+      orderByClause = asc(stations.chargeFee)
+    } else {
+      // 默认：综合排序（使用量降序）
+      orderByClause = desc(stations.usedCount)
+    }
+
     const rows = await db
       .select({
         stationId: stations.id,
@@ -44,7 +64,7 @@ export class StationService {
       })
       .from(stations)
       .where(whereClause)
-      .orderBy(desc(stations.usedCount))
+      .orderBy(orderByClause)
       .limit(limit)
       .offset(offset)
 

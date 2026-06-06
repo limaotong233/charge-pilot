@@ -46,7 +46,10 @@ export struct RoutePlanningMap {
       currentPage: 1,
       pageSize: 1000,
       stationName: '',
-      chargeType: null
+      chargeType: null,
+      sortBy: null,
+      latitude: null,
+      longitude: null
     }
     let res = await getStationList<StationListReturning>(data)
 
