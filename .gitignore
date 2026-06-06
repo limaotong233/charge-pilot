@@ -11,7 +11,11 @@ Thumbs.db
 .agents/
 .claude/
 .qoder/
+CLAUDE.md
 skills-lock.json
+
+# ==================== 文档（个人/简历用） ====================
+docs/
 
 # ==================== Node.js ====================
 node_modules/
