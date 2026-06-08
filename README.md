@@ -2,7 +2,14 @@
 
 鸿蒙原生电动汽车充电服务平台，包含 HarmonyOS NEXT 客户端和自建后端服务。
 
-![image-20260606195235100](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195235100.png)![image-20260606195237932](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195237932.png)![image-20260606195407479](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195407479.png)![image-20260606195439361](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195439361.png)![image-20260606195523049](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195523049.png![image-20260606195534755](C:\Users\24634\AppData\Roaming\Typora\typora-user-images\image-20260606195534755.png
+<p align="center">
+  <img src="assets/screenshot-01.png" width="18%" />
+  <img src="assets/screenshot-02.png" width="18%" />
+  <img src="assets/screenshot-03.png" width="18%" />
+  <img src="assets/screenshot-04.png" width="18%" />
+  <img src="assets/screenshot-05.png" width="18%" />
+  <img src="assets/screenshot-06.png" width="18%" />
+</p>
 
 
 
