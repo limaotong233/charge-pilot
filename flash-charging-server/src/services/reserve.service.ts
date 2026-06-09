@@ -1,4 +1,4 @@
-import { db } from '../config/database'
+import { db, pool } from '../config/database'
 import { reservations, ports, stations, portBindings } from '../models/schema'
 import { eq, and, like, sql } from 'drizzle-orm'
 import { getPagination } from '../utils/pagination'
@@ -74,52 +74,61 @@ export class ReserveService {
   }
 
   async addReservation(userId: string, body: ReserveAddBody): Promise<void> {
-    // 获取站点和桩口信息
-    const [station] = await db
-      .select({ stationName: stations.stationName })
-      .from(stations)
-      .where(eq(stations.id, body.stationId))
-      .limit(1)
+    const client = await pool.connect()
+    try {
+      await client.query('BEGIN')
 
-    const [port] = await db
-      .select({ portName: ports.portName })
-      .from(ports)
-      .where(eq(ports.id, body.portId))
-      .limit(1)
+      // 1. 锁定桩口行（悲观锁），防止并发预约
+      const portLock = await client.query(
+        'SELECT id, port_name FROM ports WHERE id = $1 FOR UPDATE',
+        [body.portId]
+      )
+      if (portLock.rows.length === 0) {
+        throw new Error('充电桩不存在')
+      }
 
-    if (!station || !port) throw new Error('充电站或充电桩不存在')
+      // 2. 获取站点名
+      const stationRes = await client.query(
+        'SELECT station_name FROM stations WHERE id = $1',
+        [body.stationId]
+      )
+      if (stationRes.rows.length === 0) {
+        throw new Error('充电站不存在')
+      }
 
-    // 检查时间冲突
-    const conflict = await db
-      .select({ id: reservations.id })
-      .from(reservations)
-      .where(and(
-        eq(reservations.portId, body.portId),
-        eq(reservations.status, 0),
-        sql`tsrange(${reservations.startTime}, ${reservations.endTime}) && tsrange(${body.startTime}::timestamp, ${body.endTime}::timestamp)`
-      ))
-      .limit(1)
+      // 3. 在锁保护下检查时间冲突
+      const conflict = await client.query(
+        `SELECT id FROM reservations
+         WHERE port_id = $1 AND status = 0
+         AND tstzrange(start_time, end_time) && tstzrange($2::timestamptz, $3::timestamptz)
+         LIMIT 1`,
+        [body.portId, body.startTime, body.endTime]
+      )
 
-    if (conflict.length > 0) {
-      throw new Error('该时段已被预约')
+      if (conflict.rows.length > 0) {
+        throw new Error('该时段已被预约')
+      }
+
+      // 4. 插入预约记录
+      await client.query(
+        `INSERT INTO reservations (id, user_id, station_id, port_id, station_name, port_name, start_time, end_time, soc_value, status)
+         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, 0)`,
+        [userId, body.stationId, body.portId, stationRes.rows[0].station_name, portLock.rows[0].port_name, body.startTime, body.endTime, body.socValue || 0]
+      )
+
+      // 5. 更新桩口状态
+      await client.query(
+        'UPDATE ports SET port_status = 1, reserve_time = $1, updated_at = NOW() WHERE id = $2',
+        [body.startTime, body.portId]
+      )
+
+      await client.query('COMMIT')
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    } finally {
+      client.release()
     }
-
-    await db.insert(reservations).values({
-      userId,
-      stationId: body.stationId,
-      portId: body.portId,
-      stationName: station.stationName,
-      portName: port.portName,
-      startTime: new Date(body.startTime),
-      endTime: new Date(body.endTime),
-      socValue: body.socValue,
-      status: 0,
-    })
-
-    // 更新充电桩状态为已预约
-    await db.update(ports)
-      .set({ portStatus: 1, reserveTime: new Date(body.startTime), updatedAt: new Date() })
-      .where(eq(ports.id, body.portId))
   }
 
   async cancelReservation(userId: string, reserveId: string): Promise<void> {

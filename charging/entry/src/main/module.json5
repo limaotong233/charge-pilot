@@ -19,7 +19,7 @@
         "continuable": true,
         "continueType": ['EntryAbility_ContinueQuickStart'],
         "description": "$string:EntryAbility_desc",
-        "icon": "$media:logo",
+        "icon": "$media:Logo_ChargePilot",
         "label": "$string:EntryAbility_label",
         "startWindowIcon": "$media:startIcon",
         "startWindowBackground": "$color:start_window_background",
