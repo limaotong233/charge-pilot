@@ -92,7 +92,6 @@ function openModal(title, body, footer) {
   document.getElementById('modalOverlay').style.display = 'flex'
 }
 function closeModal() { document.getElementById('modalOverlay').style.display = 'none' }
-function logout() { window.location.reload() }
 
 // ============ 菜单 ============
 document.querySelectorAll('.menu-item').forEach(item => {
