@@ -23,7 +23,7 @@ function showLoginPage() {
   document.querySelector('.main').innerHTML = `
     <div style="flex:1;display:flex;justify-content:center;align-items:center;background:#f7f8fc">
       <div style="background:#fff;border-radius:12px;padding:40px;width:360px;border:1px solid #eef0f5;box-shadow:0 4px 20px rgba(0,0,0,.06)">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;text-align:center">电寻管理平台</h2>
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;text-align:center">寻电管理平台</h2>
         <p style="font-size:13px;color:#9ca3af;text-align:center;margin-bottom:28px">请使用管理员账号登录</p>
         <div class="form-group"><label>账号</label><input id="loginAccount" placeholder="管理员账号"></div>
         <div class="form-group"><label>密码</label><input id="loginPwd" type="password" placeholder="密码"></div>
