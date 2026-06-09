@@ -15,7 +15,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
 
   try {
     const payload = verifyToken(token)
-    req.user = { userId: payload.userId, account: payload.account }
+    req.user = { userId: payload.userId, account: payload.account, role: payload.role }
     next()
   } catch (err: any) {
     if (err.name === 'TokenExpiredError') {
@@ -24,4 +24,13 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
       res.json(fail('认证无效', ResultCode.SESSION_INVALID))
     }
   }
+}
+
+// 管理员权限中间件（在 authMiddleware 之后使用）
+export function adminMiddleware(req: AuthRequest, res: Response, next: NextFunction): void {
+  if (req.user?.role !== 'admin') {
+    res.json(fail('无管理员权限', ResultCode.GENERAL_ERROR))
+    return
+  }
+  next()
 }

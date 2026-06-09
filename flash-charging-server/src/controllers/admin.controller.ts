@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express'
 import { adminService } from '../services/admin.service'
-import { success } from '../utils/response'
+import { success, fail } from '../utils/response'
 import { AuthRequest } from '../types'
 
 export async function getDashboard(_req: AuthRequest, res: Response, next: NextFunction) {
@@ -22,6 +22,18 @@ export async function updateUser(req: AuthRequest, res: Response, next: NextFunc
   try {
     await adminService.updateUser(req.params.id as string as string, req.body)
     res.json(success(null))
+  } catch (err) { next(err) }
+}
+
+export async function createUser(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const { account, userName, password, role } = req.body as { account: string; userName: string; password: string; role: string }
+    if (!account || !password) {
+      res.json(fail('账号和密码不能为空'))
+      return
+    }
+    const id = await adminService.createUser({ account, userName, password, role: role || 'user' })
+    res.json(success({ id }))
   } catch (err) { next(err) }
 }
 

@@ -1,7 +1,57 @@
 let currentPage = 'dashboard'
 let pagination = { page: 1, size: 20, total: 0 }
+let isLoggedIn = !!API.token
 
-// ============ 工具函数 ============
+// ============ 登录检查 ============
+async function checkAuth() {
+  if (!API.token) {
+    showLoginPage()
+    return false
+  }
+  try {
+    await API.getDashboard()
+    return true
+  } catch (e) {
+    API.clearToken()
+    showLoginPage()
+    return false
+  }
+}
+
+function showLoginPage() {
+  isLoggedIn = false
+  document.querySelector('.main').innerHTML = `
+    <div style="flex:1;display:flex;justify-content:center;align-items:center;background:#f7f8fc">
+      <div style="background:#fff;border-radius:12px;padding:40px;width:360px;border:1px solid #eef0f5;box-shadow:0 4px 20px rgba(0,0,0,.06)">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;text-align:center">电寻管理平台</h2>
+        <p style="font-size:13px;color:#9ca3af;text-align:center;margin-bottom:28px">请使用管理员账号登录</p>
+        <div class="form-group"><label>账号</label><input id="loginAccount" placeholder="管理员账号"></div>
+        <div class="form-group"><label>密码</label><input id="loginPwd" type="password" placeholder="密码"></div>
+        <button class="btn btn-primary" style="width:100%;padding:10px;margin-top:8px" onclick="doLogin()">登录</button>
+        <p id="loginError" style="color:#ef4444;font-size:13px;text-align:center;margin-top:12px;display:none"></p>
+      </div>
+    </div>`
+}
+
+async function doLogin() {
+  const account = document.getElementById('loginAccount').value
+  const password = document.getElementById('loginPwd').value
+  const errEl = document.getElementById('loginError')
+  try {
+    await API.login(account, password)
+    isLoggedIn = true
+    errEl.style.display = 'none'
+    window.location.reload()
+  } catch (e) {
+    errEl.textContent = e.message || '登录失败'
+    errEl.style.display = 'block'
+  }
+}
+
+function logout() {
+  API.clearToken()
+  window.location.reload()
+}
 function toast(msg, type = 'success') {
   const el = document.createElement('div')
   el.className = `toast toast-${type}`
@@ -197,16 +247,40 @@ async function renderUsers(el) {
         <input id="userSearch" placeholder="搜索账号..." value="${keyword}" onkeydown="if(event.key==='Enter'){document.getElementById('content')._keyword=this.value;p=1;loadPage('users')}">
         <button class="btn" onclick="document.getElementById('content')._keyword=document.getElementById('userSearch').value;p=1;loadPage('users')">搜索</button>
       </div>
+      <button class="btn btn-add" onclick="addUser()">新增用户</button>
     </div>
     <div class="table-wrap"><table>
-      <thead><tr><th>账号</th><th>用户名</th><th>注册时间</th><th>状态</th><th>操作</th></tr></thead>
+      <thead><tr><th>账号</th><th>用户名</th><th>角色</th><th>注册时间</th><th>状态</th><th>操作</th></tr></thead>
       <tbody>${data.list.map(u => `<tr>
-        <td>${u.account}</td><td>${u.userName||'-'}</td><td>${formatTime(u.createdAt)}</td>
+        <td>${u.account}</td><td>${u.userName||'-'}</td>
+        <td>${u.role === 'admin' ? '<span class="badge badge-info">管理员</span>' : '<span class="badge badge-success">用户</span>'}</td>
+        <td>${formatTime(u.createdAt)}</td>
         <td>${u.delFlag===0?'<span class="badge badge-success">正常</span>':'<span class="badge badge-danger">已删除</span>'}</td>
         <td><div class="actions"><button class="btn btn-sm" onclick="editUser('${u.id}','${(u.userName||'').replace(/'/g,"\\'")}')">编辑</button></div></td>
       </tr>`).join('')}</tbody>
     </table></div>
     ${paginate(data.total)}`
+}
+
+function addUser() {
+  openModal('新增用户', `
+    <div class="form-group"><label>账号</label><input id="newUserAccount" placeholder="登录账号"></div>
+    <div class="form-group"><label>用户名</label><input id="newUserName" placeholder="显示名称"></div>
+    <div class="form-group"><label>密码</label><input id="newUserPwd" type="password" placeholder="登录密码"></div>
+    <div class="form-group"><label>角色</label><select id="newUserRole"><option value="user">普通用户</option><option value="admin">管理员</option></select></div>
+  `, `<button class="btn btn-primary" onclick="saveNewUser()">创建</button><button class="btn" onclick="closeModal()">取消</button>`)
+}
+
+async function saveNewUser() {
+  await API.createUser({
+    account: document.getElementById('newUserAccount').value,
+    userName: document.getElementById('newUserName').value,
+    password: document.getElementById('newUserPwd').value,
+    role: document.getElementById('newUserRole').value,
+  })
+  toast('创建成功')
+  closeModal()
+  loadPage('users')
 }
 
 function editUser(id, name) {
@@ -432,4 +506,4 @@ async function renderCollections(el) {
 }
 
 // 初始化
-loadPage('dashboard')
+checkAuth().then(ok => { if (ok) loadPage('dashboard') })

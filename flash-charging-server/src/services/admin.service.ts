@@ -34,7 +34,7 @@ export class AdminService {
     const [total] = await db.select({ count: count() }).from(users).where(conditions)
     const list = await db.select({
       id: users.id, account: users.account, userName: users.userName,
-      createdAt: users.createdAt, delFlag: users.delFlag,
+      createdAt: users.createdAt, delFlag: users.delFlag, role: users.role,
     }).from(users).where(conditions).orderBy(desc(users.createdAt)).limit(limit).offset(offset)
 
     return { total: total.count, list }
@@ -46,6 +46,22 @@ export class AdminService {
     if (data.password) updateData.passwordHash = await hashPassword(data.password)
     if (Object.keys(updateData).length === 0) return
     await db.update(users).set({ ...updateData, updatedAt: new Date() }).where(eq(users.id, id))
+  }
+
+  async createUser(data: { account: string; userName: string; password: string; role: string }) {
+    const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.account, data.account)).limit(1)
+    if (existing) throw new Error('账号已存在')
+
+    const passwordHash = await hashPassword(data.password)
+    const [user] = await db.insert(users).values({
+      account: data.account,
+      userName: data.userName || data.account,
+      passwordHash,
+      role: data.role || 'user',
+      delFlag: 0,
+    }).returning({ id: users.id })
+
+    return user.id
   }
 
   // ============ 充电站管理 ============

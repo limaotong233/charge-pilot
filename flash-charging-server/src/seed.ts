@@ -18,11 +18,11 @@ async function seed() {
   const passwordHash = await hashPassword('123456')
 
   const [user1] = await db.insert(users).values({
-    account: 'admin', passwordHash, userName: '管理员',
+    account: 'admin', passwordHash, userName: '管理员', role: 'admin',
   }).returning({ id: users.id })
 
   const [user2] = await db.insert(users).values({
-    account: 'test', passwordHash, userName: '测试用户',
+    account: 'test', passwordHash, userName: '测试用户', role: 'user',
   }).returning({ id: users.id })
 
   console.log('创建用户: admin, test (密码: 123456)')

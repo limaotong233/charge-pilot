@@ -12,6 +12,7 @@ export const users = pgTable('users', {
   userName: varchar('user_name', { length: 128 }),
   // 外键: files(id) — 由于 users/files 存在循环引用，外键通过 SQL migration 添加
   avatarFileId: uuid('avatar_file_id'),
+  role: varchar('role', { length: 20 }).notNull().default('user'), // user=普通用户, admin=管理员
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   delFlag: smallint('del_flag').notNull().default(0), // 0=正常, 1=已删除

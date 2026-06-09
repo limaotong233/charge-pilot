@@ -7,7 +7,6 @@ import { LoginResult, UserInfoResult } from '../types'
 
 export class AuthService {
   async register(account: string, userName: string, password: string): Promise<LoginResult> {
-    // 检查账号是否已存在
     const [existing] = await db
       .select({ id: users.id })
       .from(users)
@@ -24,10 +23,11 @@ export class AuthService {
       account,
       userName,
       passwordHash,
+      role: 'user', // App 注册只能是普通用户
       delFlag: 0,
-    }).returning({ id: users.id, account: users.account })
+    }).returning({ id: users.id, account: users.account, role: users.role })
 
-    const payload = { userId: user.id, account: user.account }
+    const payload = { userId: user.id, account: user.account, role: user.role }
     return {
       accessToken: signAccessToken(payload),
       refreshToken: signRefreshToken(payload),
@@ -50,7 +50,7 @@ export class AuthService {
       throw new Error('账号或密码错误')
     }
 
-    const payload = { userId: user.id, account: user.account }
+    const payload = { userId: user.id, account: user.account, role: user.role }
     return {
       accessToken: signAccessToken(payload),
       refreshToken: signRefreshToken(payload),

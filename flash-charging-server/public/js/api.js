@@ -1,12 +1,29 @@
 // API 封装
 const API = {
   base: '/admin/api',
+  token: localStorage.getItem('admin_token') || '',
+
+  setToken(token) {
+    this.token = token
+    localStorage.setItem('admin_token', token)
+  },
+
+  clearToken() {
+    this.token = ''
+    localStorage.removeItem('admin_token')
+  },
 
   async request(method, path, body) {
     const opts = { method, headers: { 'Content-Type': 'application/json' } }
+    if (this.token) opts.headers['Authorization'] = `Bearer ${this.token}`
     if (body && method !== 'GET') opts.body = JSON.stringify(body)
     const res = await fetch(this.base + path, opts)
     const data = await res.json()
+    if (data.code === 'EDU99999' || data.code === 'EDU30021') {
+      this.clearToken()
+      window.location.reload()
+      throw new Error('登录已过期')
+    }
     if (data.code !== 'EDU00000') throw new Error(data.msg || '请求失败')
     return data.data
   },
@@ -16,11 +33,19 @@ const API = {
   put(path, body) { return this.request('PUT', path, body) },
   del(path) { return this.request('DELETE', path) },
 
+  // 登录
+  async login(account, password) {
+    const data = await this.post('/login', { account, password })
+    this.setToken(data.accessToken)
+    return data
+  },
+
   // 仪表盘
   getDashboard() { return this.get('/dashboard') },
 
   // 用户
   getUsers(page, size, keyword) { return this.get(`/users?page=${page}&size=${size}&keyword=${keyword || ''}`) },
+  createUser(data) { return this.post('/users', data) },
   updateUser(id, data) { return this.put(`/users/${id}`, data) },
 
   // 充电站
