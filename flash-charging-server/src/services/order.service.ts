@@ -1,5 +1,5 @@
 import { db } from '../config/database'
-import { orders, ports } from '../models/schema'
+import { orders, ports, stations } from '../models/schema'
 import { eq, and, sql, desc } from 'drizzle-orm'
 import { getPagination, PaginatedResult } from '../utils/pagination'
 import {
@@ -187,6 +187,11 @@ export class OrderService {
         updatedAt: new Date(),
       })
       .where(eq(orders.id, orderId))
+
+    // 支付完成后，站点使用次数 +1
+    await db.update(stations)
+      .set({ usedCount: sql`${stations.usedCount} + 1`, updatedAt: new Date() })
+      .where(eq(stations.id, order.stationId))
   }
 
   async getOrderList(
