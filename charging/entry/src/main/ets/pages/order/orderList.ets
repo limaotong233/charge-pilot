@@ -61,7 +61,7 @@ export struct OrderList {
           .margin({ top: '40lpx' })
       }.justifyContent(FlexAlign.Center)
 
-      Text(resStr(this.context, 'order_list_empty'))
+      Text(resStr(getContext(this), 'order_list_empty'))
         .fontSize('14lpx')
         .margin({ bottom: '8lpx' })
         .fontColor($r('app.color.999999'))
@@ -128,7 +128,7 @@ export struct OrderList {
   build() {
     Column() {
       HeadComponent({
-        headName: resStr(this.context, 'order_list_head_name'),
+        headName: resStr(getContext(this), 'order_list_head_name'),
         isHaveBtn: false,
         backUrl: 'pages/Index',
         tabs: 1,
@@ -146,7 +146,7 @@ export struct OrderList {
           } else {
             this.OrderList()
           }
-        }.tabBar(this.tabBuilder(0, resStr(this.context, 'order_list_tab_all')))
+        }.tabBar(this.tabBuilder(0, resStr(getContext(this), 'order_list_tab_all')))
 
         TabContent() {
           if (this.orderList.length === 0) {
@@ -154,7 +154,7 @@ export struct OrderList {
           } else {
             this.OrderList()
           }
-        }.tabBar(this.tabBuilder(1, resStr(this.context, 'order_list_tab_pending')))
+        }.tabBar(this.tabBuilder(1, resStr(getContext(this), 'order_list_tab_pending')))
 
         TabContent() {
           if (this.orderList.length === 0) {
@@ -162,7 +162,7 @@ export struct OrderList {
           } else {
             this.OrderList()
           }
-        }.tabBar(this.tabBuilder(2, resStr(this.context, 'order_list_tab_completed')))
+        }.tabBar(this.tabBuilder(2, resStr(getContext(this), 'order_list_tab_completed')))
       }
       .vertical(false)
       .barMode(BarMode.Fixed)

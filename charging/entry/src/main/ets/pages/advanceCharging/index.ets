@@ -21,12 +21,13 @@ import {
 } from '../../model/interface/api/AdvanceChargingApiInterface';
 import { useToastHook } from '../../service';
 import { CustomShowToast } from '../../components/customShowToast';
+import { resStr } from '../../utils/i18n';
 
 
 @Entry
 @Component
 struct AdvanceCharging {
-  @State activeName: string = '我的有序桩'
+  @State activeName: string = ''
   @State currentIndex: number = 0;
   private tasController: TabsController = new TabsController();
   @State selectIndex: number = 0;
@@ -53,7 +54,7 @@ struct AdvanceCharging {
 
   private validateSiteName(value: string) {
     if (!value) {
-      this.errors.siteName = '充电站名称不能为空'
+      this.errors.siteName = resStr(getContext(this), 'adv_charging_error_station_empty')
     } else {
       this.errors.siteName = undefined
     }
@@ -61,7 +62,7 @@ struct AdvanceCharging {
 
   private validateSiteNumber(value: string) {
     if (!value) {
-      this.errors.siteNumber = '充电桩编号不能为空'
+      this.errors.siteNumber = resStr(getContext(this), 'adv_charging_error_port_empty')
     } else {
       this.errors.siteNumber = undefined
     }
@@ -76,6 +77,7 @@ struct AdvanceCharging {
   }
 
   aboutToAppear(): void {
+    this.activeName = resStr(getContext(this), 'adv_charging_my_ordered_pile')
     LocalPreferences.put('SOCValue', 60)
     this.getReserveStationNameList('')
   }
@@ -86,7 +88,7 @@ struct AdvanceCharging {
       btnColor: $r('app.color.longBtn_blue'),
       btnFontColor: $r('app.color.background_color_over'),
       btnBorderColor: $r('app.color.longBtn_blue'),
-      btnName: '绑定',
+      btnName: resStr(getContext(this), 'adv_charging_btn_bind'),
       onEvent: (data: string) => {
         this.getReserveBind()
       }
@@ -127,19 +129,19 @@ struct AdvanceCharging {
   // 绑定充电桩
   getReserveBind() {
     if (this.form.stationName === '') {
-      useToastHook('充电站名称不能为空', '40lpx')
+      useToastHook(resStr(getContext(this), 'adv_charging_error_station_empty'), '40lpx')
       return
     }
     if (this.form.portName === '') {
-      useToastHook('充电桩编号不能为空', '40lpx')
+      useToastHook(resStr(getContext(this), 'adv_charging_error_port_empty'), '40lpx')
       return
     }
-    this.dialogTitle = '绑定充电桩中'
+    this.dialogTitle = resStr(getContext(this), 'adv_charging_binding')
     // this.loading = true
     getReserveBind<string>({ stationName: this.form.stationName, portName: this.form.portName }).then((res) => {
       console.info('接口 绑定充电桩', JSON.stringify(res))
       this.dialogTitle = ''
-      this.cusSText = '绑定成功'
+      this.cusSText = resStr(getContext(this), 'adv_charging_toast_bind_success')
       this.cusStatus = 'success'
       this.isShowMarkLayer = false
       this.haveCard = false
@@ -159,7 +161,7 @@ struct AdvanceCharging {
       this.stationOption = []
     }).catch((err: Error) => {
       this.dialogTitle = ''
-      this.cusSText = '绑定失败'
+      this.cusSText = resStr(getContext(this), 'adv_charging_toast_bind_fail')
       this.cusStatus = 'error'
       this.isShowMarkLayer = false
       this.haveCard = true
@@ -171,9 +173,9 @@ struct AdvanceCharging {
   mainContent() {
     Column() {
       Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-        Text('充电站名称')
+        Text($r('app.string.adv_charging_label_station'))
           .width('120lpx')
-        TextInput({ text: this.form.stationName, placeholder: '请输入' })
+        TextInput({ text: this.form.stationName, placeholder: $r('app.string.adv_charging_placeholder_input') })
           .height('40lpx')
           .placeholderFont({
             size: '16lpx'
@@ -215,9 +217,9 @@ struct AdvanceCharging {
       .borderColor({ bottom: $r('app.color.EEEEEE') })
 
       Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-        Text('充电桩编号')
+        Text($r('app.string.adv_charging_label_port'))
           .width('120lpx')
-        TextInput({ text: `${this.form.portName}`, placeholder: '请选择' })
+        TextInput({ text: `${this.form.portName}`, placeholder: $r('app.string.adv_charging_placeholder_select') })
           .height('40lpx')
           .placeholderFont({
             size: '16lpx'
@@ -258,7 +260,7 @@ struct AdvanceCharging {
       btnColor: $r('app.color.longBtn_blue'),
       btnFontColor: $r('app.color.background_color_over'),
       btnBorderColor: $r('app.color.longBtn_blue'),
-      btnName: '保存设置',
+      btnName: resStr(getContext(this), 'btn_save_settings'),
       onEvent: (data: string) => {
         // this.dialogControllerProgress.open()
         LocalPreferences.put('SOCValue', this.carInfo.socValue)
@@ -273,7 +275,7 @@ struct AdvanceCharging {
   mainContent2() {
     Column() {
       Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-        Text('SOC值')
+        Text($r('app.string.adv_charging_label_soc'))
           .fontSize('14lpx')
           .fontColor($r('app.color.charging_font_color'))
           .width('120lpx')
@@ -309,7 +311,7 @@ struct AdvanceCharging {
     Stack({ alignContent: Alignment.BottomStart }) {
       Column() {
         HeadComponent({
-          headName: '预约充电',
+          headName: resStr(getContext(this), 'adv_charging_head_name'),
           isHaveBtn: false,
           backUrl: 'pages/Index',
           tabs: 1
@@ -366,7 +368,7 @@ struct AdvanceCharging {
         if (this.isShowMarkLayer) {
           BottomDialog({
             bdBackgroundColor: $r('app.color.F3F3F3'),
-            bdName: '绑定有序桩',
+            bdName: resStr(getContext(this), 'adv_charging_dialog_bind_title'),
             isHaveLongBtn: true,
             MainContent: (): void => {
               this.mainContent()
@@ -385,7 +387,7 @@ struct AdvanceCharging {
         if (this.isShowMarkLayer2) {
           BottomDialog({
             bdBackgroundColor: $r('app.color.F3F3F3'),
-            bdName: '偏好设置',
+            bdName: resStr(getContext(this), 'adv_charging_dialog_pref_title'),
             isHaveLongBtn: true,
             MainContent: (): void => {
               this.mainContent2()
@@ -425,12 +427,12 @@ struct AdvanceCharging {
     this.getReserveStationNameList('')
 
     if (carStatus === 'noAppointment') {
-      this.activeName = '预约充电'
+      this.activeName = resStr(getContext(this), 'adv_charging_reservation')
       this.currentIndex = 1
     }
 
     if (carStatus === 'appointment') {
-      this.activeName = '预约充电'
+      this.activeName = resStr(getContext(this), 'adv_charging_reservation')
       this.currentIndex = 1
     }
 

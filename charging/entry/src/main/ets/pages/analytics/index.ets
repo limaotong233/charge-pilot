@@ -34,7 +34,7 @@ struct Analytics {
         this.data = res
       }
     } catch (e) {
-      useToastHook(resStr(this.context, 'analytics_toast_load_fail'), '40lpx')
+      useToastHook(resStr(getContext(this), 'analytics_toast_load_fail'), '40lpx')
     } finally {
       this.loading = false
     }
@@ -61,7 +61,7 @@ struct Analytics {
     Column() {
       // 顶部导航栏
       HeadComponent({
-        headName: resStr(this.context, 'analytics_head_name'),
+        headName: resStr(getContext(this), 'analytics_head_name'),
         backUrl: 'pages/Index',
         tabs: 1
       })
@@ -72,7 +72,7 @@ struct Analytics {
             .width('40lpx')
             .height('40lpx')
             .margin({ top: '120lpx' })
-          Text(resStr(this.context, 'common_loading'))
+          Text(resStr(getContext(this), 'common_loading'))
             .fontSize('14lpx')
             .fontColor($r('app.color.999999'))
             .margin({ top: '12lpx' })
@@ -85,16 +85,16 @@ struct Analytics {
             // ============ 顶部数据卡片 ============
             Grid() {
               GridItem() {
-                this.StatCard(resStr(this.context, 'analytics_card_total_capacity'), `${this.formatNum(this.data.totalCapacity)} kWh`, '#4CAF50')
+                this.StatCard(resStr(getContext(this), 'analytics_card_total_capacity'), `${this.formatNum(this.data.totalCapacity)} kWh`, '#4CAF50')
               }
               GridItem() {
-                this.StatCard(resStr(this.context, 'analytics_card_total_amount'), `¥${this.formatNum(this.data.totalAmount)}`, '#FF9800')
+                this.StatCard(resStr(getContext(this), 'analytics_card_total_amount'), `¥${this.formatNum(this.data.totalAmount)}`, '#FF9800')
               }
               GridItem() {
-                this.StatCard(resStr(this.context, 'analytics_card_total_orders'), `${this.data.totalOrders} ${resStr(this.context, 'analytics_unit_times')}`, '#2196F3')
+                this.StatCard(resStr(getContext(this), 'analytics_card_total_orders'), `${this.data.totalOrders} ${resStr(getContext(this), 'analytics_unit_times')}`, '#2196F3')
               }
               GridItem() {
-                this.StatCard(resStr(this.context, 'analytics_card_co2_reduction'), `${this.formatNum(this.data.co2Reduction)} ${resStr(this.context, 'analytics_unit_kg')}`, '#9C27B0')
+                this.StatCard(resStr(getContext(this), 'analytics_card_co2_reduction'), `${this.formatNum(this.data.co2Reduction)} ${resStr(getContext(this), 'analytics_unit_kg')}`, '#9C27B0')
               }
             }
             .columnsTemplate('1fr 1fr')
@@ -106,9 +106,9 @@ struct Analytics {
 
             // ============ 平均数据 ============
             Row() {
-              this.AvgItem(resStr(this.context, 'analytics_label_avg_capacity'), `${this.formatNum(this.data.avgCapacity)} kWh`)
+              this.AvgItem(resStr(getContext(this), 'analytics_label_avg_capacity'), `${this.formatNum(this.data.avgCapacity)} kWh`)
               Divider().vertical(true).height('32lpx').color($r('app.color.EEEEEE')).margin({ left: '16lpx', right: '16lpx' })
-              this.AvgItem(resStr(this.context, 'analytics_label_avg_amount'), `¥${this.formatNum(this.data.avgAmount)}`)
+              this.AvgItem(resStr(getContext(this), 'analytics_label_avg_amount'), `¥${this.formatNum(this.data.avgAmount)}`)
             }
             .width('100%')
             .justifyContent(FlexAlign.Center)
@@ -119,13 +119,13 @@ struct Analytics {
 
             // ============ 近6个月充电趋势（柱状图） ============
             Column() {
-              Text(resStr(this.context, 'analytics_section_trend'))
+              Text(resStr(getContext(this), 'analytics_section_trend'))
                 .fontSize('16lpx')
                 .fontWeight(FontWeight.Bold)
                 .margin({ bottom: '12lpx' })
 
               if (this.data.monthlyTrend.length === 0) {
-                Text(resStr(this.context, 'analytics_empty_no_records'))
+                Text(resStr(getContext(this), 'analytics_empty_no_records'))
                   .fontSize('14lpx')
                   .fontColor($r('app.color.999999'))
                   .margin({ top: '24lpx', bottom: '24lpx' })
@@ -166,12 +166,12 @@ struct Analytics {
                 Row() {
                   Row() {
                     Rect().width('8lpx').height('8lpx').fill('#4CAF50')
-                    Text(resStr(this.context, 'analytics_legend_capacity')).fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
+                    Text(resStr(getContext(this), 'analytics_legend_capacity')).fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
                   }
 
                   Row() {
                     Rect().width('8lpx').height('8lpx').fill('#FF9800')
-                    Text(resStr(this.context, 'analytics_legend_expense')).fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
+                    Text(resStr(getContext(this), 'analytics_legend_expense')).fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
                   }
                   .margin({ left: '24lpx' })
                 }
@@ -187,13 +187,13 @@ struct Analytics {
 
             // ============ 常去充电站 TOP5 ============
             Column() {
-              Text(resStr(this.context, 'analytics_section_top_stations'))
+              Text(resStr(getContext(this), 'analytics_section_top_stations'))
                 .fontSize('16lpx')
                 .fontWeight(FontWeight.Bold)
                 .margin({ bottom: '12lpx' })
 
               if (this.data.topStations.length === 0) {
-                Text(resStr(this.context, 'analytics_empty_no_records'))
+                Text(resStr(getContext(this), 'analytics_empty_no_records'))
                   .fontSize('14lpx')
                   .fontColor($r('app.color.999999'))
                   .margin({ top: '12lpx', bottom: '12lpx' })
@@ -215,7 +215,7 @@ struct Analytics {
                       .textOverflow({ overflow: TextOverflow.Ellipsis })
 
                     // 次数
-                    Text(`${item.count}${resStr(this.context, 'analytics_unit_times')}`)
+                    Text(`${item.count}${resStr(getContext(this), 'analytics_unit_times')}`)
                       .fontSize('13lpx')
                       .fontColor($r('app.color.999999'))
                   }

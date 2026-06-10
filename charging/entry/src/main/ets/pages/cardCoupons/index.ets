@@ -9,6 +9,7 @@ import {
 } from '../../model/interface/api/CardCouponsApiInterface';
 import { useToastHook } from '../../service';
 import { JSON } from '@kit.ArkTS';
+import { resStr } from '../../utils/i18n';
 
 @Observed
 class cardItems {
@@ -37,7 +38,7 @@ struct CarMainContentItem {
     await this.getVoucherList()
     await this.getVoucherCount()
     console.info('接口 领取卡券', JSON.stringify(res))
-    useToastHook('领取成功', '32lpx')
+    useToastHook(resStr(getContext(this), 'card_coupons_toast_claim_success'), '32lpx')
   }
 
   // 我的卡券数量
@@ -84,7 +85,7 @@ struct CarMainContentItem {
             .fontSize('36lpx')
             .fontColor($r('app.color.chargingPrice_color'))
             .fontWeight('bold')
-          Text('元')
+          Text($r('app.string.common_unit_yuan'))
             .fontSize('12lpx')
             .fontColor($r('app.color.chargingPrice_color'))
         }
@@ -92,12 +93,12 @@ struct CarMainContentItem {
 
         Column() {
           Row() {
-            Text('充电缴费代金券')
+            Text($r('app.string.card_coupons_label_voucher_name'))
               .fontSize('16lpx')
           }.margin({ bottom: '10lpx' })
 
           Row() {
-            Text(`无门槛使用`)
+            Text($r('app.string.card_coupons_label_no_threshold'))
               .fontSize('12lpx')
               .fontColor($r('app.color.charging_font_color'))
           }
@@ -110,7 +111,7 @@ struct CarMainContentItem {
       Column() {
         Button({ type: ButtonType.Capsule, stateEffect: true }) {
           Row() {
-            Text('领取').fontSize('12lpx').fontColor($r('app.color.background_color_over')).height('20lpx')
+            Text($r('app.string.card_coupons_btn_claim')).fontSize('12lpx').fontColor($r('app.color.background_color_over')).height('20lpx')
           }.alignItems(VerticalAlign.Center).height('20lpx').margin({ left: '12lpx', right: '12lpx' })
         }.backgroundColor($r('app.color.longBtn_blue')).height('24lpx').width('100%')
         .onClick(async () => {
@@ -121,7 +122,7 @@ struct CarMainContentItem {
           if (Number(res) < 10) {
             await this.addVoucher(this.mainContentItem.voucherId)
           } else if (Number(res) === 10) {
-            this.cusSText = `您领取的${this.mainContentItem.price}代金券已满${10}张`
+            this.cusSText = resStr(getContext(this), 'card_coupons_toast_voucher_full')
           }
           console.info(`卡券数量receive 卡券${JSON.stringify(this.userCardList)}`)
         })
@@ -148,14 +149,14 @@ struct MainContentTwo {
               .fontSize('36lpx')
               .fontColor($r('app.color.chargingPrice_color'))
               .fontWeight('bold')
-            Text('元')
+            Text($r('app.string.common_unit_yuan'))
               .fontSize('12lpx')
               .fontColor($r('app.color.chargingPrice_color'))
           }
           .width('auto')
 
           Row() {
-            Text('代金券')
+            Text($r('app.string.card_coupons_label_voucher'))
               .fontSize('12lpx')
               .fontColor($r('app.color.chargingPrice_color'))
           }
@@ -168,7 +169,7 @@ struct MainContentTwo {
         .margin({ top: '24lpx', bottom: '24lpx' })
 
         Column() {
-          Text('充电缴费代金券')
+          Text($r('app.string.card_coupons_label_voucher_name'))
           Row() {
             Column() {
             }
@@ -178,7 +179,7 @@ struct MainContentTwo {
             .margin({ right: '4lpx' })
             .backgroundColor($r('app.color.charging_font_color'))
 
-            Text('无门槛使用')
+            Text($r('app.string.card_coupons_label_no_threshold'))
               .width('100%')
               .fontSize('12lpx')
               .fontColor($r('app.color.charging_font_color'))
@@ -337,7 +338,7 @@ export struct CardCoupons {
     Stack({ alignContent: Alignment.BottomStart }) {
       Column() {
         HeadComponent({
-          headName: '我的卡券',
+          headName: resStr(getContext(this), 'card_coupons_head_name'),
           isHaveBtn: true,
           receive: () => {
             this.isShowMarkLayer = true
@@ -353,13 +354,13 @@ export struct CardCoupons {
                 .margin({ top: '40lpx' })
             }.justifyContent(FlexAlign.Center)
 
-            Text('暂无卡券')
+            Text($r('app.string.card_coupons_empty'))
               .fontSize('14lpx')
               .margin({ bottom: '8lpx' })
               .fontColor($r('app.color.999999'))
               .fontWeight('bold')
 
-            Text('点击右上方“领取”按钮去领取卡券')
+            Text($r('app.string.card_coupons_empty_hint'))
               .fontSize('12lpx')
               .fontColor($r('app.color.999999'))
           }
@@ -385,13 +386,13 @@ export struct CardCoupons {
                     .margin({ top: '40lpx' })
                 }.justifyContent(FlexAlign.Center)
 
-                Text('暂无卡券')
+                Text($r('app.string.card_coupons_empty'))
                   .fontSize('14lpx')
                   .margin({ bottom: '8lpx' })
                   .fontColor($r('app.color.999999'))
                   .fontWeight('bold')
 
-                Text('点击右上方“领取”按钮去领取卡券')
+                Text($r('app.string.card_coupons_empty_hint'))
                   .fontSize('12lpx')
                   .fontColor($r('app.color.999999'))
               }
@@ -410,7 +411,7 @@ export struct CardCoupons {
 
         BottomDialog({
           bdBackgroundColor: $r('app.color.F3F3F3'),
-          bdName: '卡券领取',
+          bdName: resStr(getContext(this), 'card_coupons_dialog_title'),
           isHaveLongBtn: false,
           CustomShowToast: (): void => {
             this.customToast()

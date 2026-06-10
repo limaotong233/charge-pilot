@@ -275,6 +275,14 @@
     {"name": "head_back_my_coupons", "value": "My Vouchers"},
     {"name": "head_back_site_detail", "value": "Station Details"},
 
-    {"name": "btn_save_settings", "value": "Save Settings"}
+    {"name": "btn_save_settings", "value": "Save Settings"},
+
+    {"name": "adv_charging_error_station_empty", "value": "Station name is required"},
+    {"name": "adv_charging_error_port_empty", "value": "Charger ID is required"},
+    {"name": "adv_charging_binding", "value": "Binding charger..."},
+    {"name": "common_save_settings", "value": "Save Settings"},
+    {"name": "search_clear_history", "value": "Clear History"},
+    {"name": "card_coupons_toast_voucher_full", "value": "Voucher limit reached (max 10)"},
+    {"name": "collect_data_loaded", "value": " records loaded"}
   ]
 }

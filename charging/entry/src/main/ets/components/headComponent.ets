@@ -1,4 +1,5 @@
 import { router } from '@kit.ArkUI'
+import { resStr } from '../utils/i18n'
 
 @Component
 export struct HeadComponent {
@@ -35,7 +36,7 @@ export struct HeadComponent {
                     tabs: this.tabs
                   }
                 })
-              } else if (this.headName === '充电中') {
+              } else if (this.headName === resStr(getContext(this), 'head_back_charging')) {
                 this.backRouter()
               } else {
                 if (this.backUrl) {
@@ -52,23 +53,23 @@ export struct HeadComponent {
         }
 
         if (this.isHaveBtn) {
-          if (this.headName === '我的卡券') {
+          if (this.headName === resStr(getContext(this), 'head_back_my_coupons')) {
             Column() {
-              Text('领取')
+              Text($r('app.string.card_coupons_btn_claim'))
                 .fontSize('14lpx')
             }
             .width('40.00lpx')
             .onClick(() => {
               this.receive()
             })
-          } else if (this.headName === '充电中') {
+          } else if (this.headName === resStr(getContext(this), 'head_back_charging')) {
             Image(this.btnScr)
               .width('36lpx')
               .height('33lpx')
               .onClick(() => {
                 this.receive()
               })
-          } else if (this.headName === '站点详情') {
+          } else if (this.headName === resStr(getContext(this), 'head_back_site_detail')) {
             Image(this.btnScr)
               .width('20lpx')
               .height('20lpx')

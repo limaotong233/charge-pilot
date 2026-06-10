@@ -11,13 +11,14 @@ import { mapCommon, navi } from '@kit.MapKit'
 import { geoLocationManager } from '@kit.LocationKit'
 import { BusinessError } from '@kit.BasicServicesKit'
 import { getDistance } from '../../utils/tools'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
 export struct CollectSpots {
   scroller: Scroller = new Scroller()
   @State spotList: CollectionListItem[] = []
-  @State carStatus: string = '点击前往'
+  @State carStatus: string = ''
   @State lazyLoading: boolean = false
   @State allLoaded: boolean = false
   @State currentPage: number = 1
@@ -32,7 +33,7 @@ export struct CollectSpots {
       this.allLoaded = false
       this.spotList = []
       this.getCollectList()
-      useToastHook('取消收藏', '32lpx')
+      useToastHook(resStr(getContext(this), 'common_cancel_collect'), '32lpx')
     })
   }
 
@@ -100,13 +101,14 @@ export struct CollectSpots {
   }
 
   onPageShow(): void {
+    this.carStatus = resStr(getContext(this), 'common_go_to')
     this.getCollectList()
   }
 
   build() {
     Column() {
       HeadComponent({
-        headName: '站点收藏',
+        headName: resStr(getContext(this), 'collect_head_name'),
       })
       if (this.spotList.length > 0) {
         Column() {
@@ -135,7 +137,7 @@ export struct CollectSpots {
                         .width('48lpx')
                         .height('48lpx')
                         .margin({ right: '12lpx' })
-                      Text('已失效站点')
+                      Text($r('app.string.collect_invalid_station'))
                         .fontColor($r('app.color.historyList_font_color'))
                         .fontSize('16lpx')
                         .fontWeight('bold')
@@ -149,7 +151,7 @@ export struct CollectSpots {
                         .width('16lpx')
                         .height('16lpx')
                         .margin({ right: '8lpx' })
-                      Text('取消收藏')
+                      Text($r('app.string.collect_btn_cancel'))
                         .fontSize('16lpx')
                         .fontColor($r('app.color.F9A01E'))
                     }
@@ -186,7 +188,7 @@ export struct CollectSpots {
                   LoadingProgress()
                     .width('30lpx')
                     .height('30lpx')
-                  Text('加载中')
+                  Text($r('app.string.common_loading_short'))
                     .margin({ left: '10lpx' })
                 }.justifyContent(FlexAlign.Center)
                 .padding('15lpx')
@@ -203,7 +205,7 @@ export struct CollectSpots {
           .scrollBarWidth(0)
 
           // 底部提示
-          Text(this.allLoaded ? '已加载全部数据' : `已加载${this.spotList.length}条数据`)
+          Text(this.allLoaded ? resStr(getContext(this), 'collect_all_loaded') : `${this.spotList.length}` + resStr(getContext(this), 'collect_data_loaded'))
             .padding({ top: '10lpx', bottom: '16lpx' })
             .fontSize('10lpx')
             .fontColor($r('app.color.999999'))// .height('100%')
@@ -231,7 +233,7 @@ export struct CollectSpots {
               .margin({ top: '48lpx' })
               .width('120lpx')
               .height('120lpx')
-            Text('没有收藏站点')
+            Text($r('app.string.collect_empty'))
               .fontSize('12lpx')
               .fontColor($r('app.color.999999'))
           }

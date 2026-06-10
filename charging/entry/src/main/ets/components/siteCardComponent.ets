@@ -4,6 +4,7 @@ import { enterDetail } from '../api/HomeApi'
 import { EnterDetailItem, StationListItemReturning } from '../model/interface/api/HomeApiInterface'
 import { useToastHook } from '../service'
 import { buffer } from '@kit.ArkTS'
+import { resStr } from '../utils/i18n'
 
 @Component
 export struct SiteCardComponent {
@@ -44,7 +45,7 @@ export struct SiteCardComponent {
   AddCollect() {
     addCollectList<string>({ stationId: this.siteItemInfo?.stationId || this.stationId }).then((res) => {
       console.info('接口 添加收藏', res)
-      useToastHook('收藏成功', '32lpx')
+      useToastHook(resStr(getContext(this), 'common_collect_success'), '32lpx')
 
       if (this.siteItemInfo) {
         this.siteItemInfo.isCollect = 1 //value
@@ -58,7 +59,7 @@ export struct SiteCardComponent {
   CancelCollect() {
     cancelCollectList<string>({ stationId: this.siteItemInfo?.stationId || this.stationId }).then((res) => {
       console.info('接口 取消收藏', res)
-      useToastHook('取消收藏', '32lpx')
+      useToastHook(resStr(getContext(this), 'common_cancel_collect'), '32lpx')
 
       if (this.siteItemInfo) {
         this.siteItemInfo.isCollect = 0 //value
@@ -75,7 +76,7 @@ export struct SiteCardComponent {
     enterDetail<EnterDetailItem | StationListItemReturning>({ stationId: '1' }).then((res) => {
       console.info('enterDetail 接口 进站信息', JSON.stringify(res))
       if (res) {
-        useToastHook('请先退出站点，再前往', '40lpx')
+        useToastHook(resStr(getContext(this), 'common_exit_station_first'), '40lpx')
         return
       } else {
         console.info('enterDetail 接口 进站信息 this.siteItemInfo',JSON.stringify(this.siteItemInfo))
@@ -84,8 +85,8 @@ export struct SiteCardComponent {
         AppStorage.setOrCreate('siteItemInfo', this.siteItemInfo) //this.siteItemInfo
         AppStorage.setOrCreate('continueIsShowSheet', true)
 
-        this.carStatus = '正在前往'
-        AppStorage.setOrCreate('continueCarStatus', '正在前往')
+        this.carStatus = resStr(getContext(this), 'common_navigating')
+        AppStorage.setOrCreate('continueCarStatus', resStr(getContext(this), 'common_navigating'))
         AppStorage.setOrCreate('routerParamsSiteInfo', this.siteItemInfo)
         if (this.positionWhere !== 'map') {
           console.log('enterDetail positionWhere')
@@ -176,14 +177,14 @@ export struct SiteCardComponent {
               Text(`￥${this.siteItemInfo?.chargeFee || this.chargeFee}`)
                 .fontSize('20lpx')
                 .fontColor($r('app.color.chargingPrice_color'))
-              Text('/度起')
+              Text($r('app.string.common_price_per_kwh'))
                 .fontSize('12lpx')
                 .fontColor($r('app.color.charging_font_color'))
             }
 
             Flex({ justifyContent: FlexAlign.End, alignItems: ItemAlign.Center }) {
               Column() {
-                Text(`${(this.siteItemInfo?.chargeType === 1 || this.chargeType) ? '快' : '慢'}`)
+                Text(`${(this.siteItemInfo?.chargeType === 1 || this.chargeType) ? resStr(getContext(this), 'common_label_fast') : resStr(getContext(this), 'common_label_slow')}`)
                   .fontColor($r('app.color.background_color_over'))
                   .fontSize('12lpx')
                   .fontWeight(400)
@@ -200,7 +201,7 @@ export struct SiteCardComponent {
               })
 
               Column() {
-                Text(`${(this.usedCount === this.portCount) ? '忙' : '闲'}${this.siteItemInfo?.usedCount ||
+                Text(`${(this.usedCount === this.portCount) ? resStr(getContext(this), 'common_label_busy') : resStr(getContext(this), 'common_label_idle')}${this.siteItemInfo?.usedCount ||
                 this.usedCount}/${this.siteItemInfo?.portCount || this.portCount}`)
                   .fontSize('12lpx')
               }
@@ -240,7 +241,7 @@ export struct SiteCardComponent {
               .borderRadius('2lpx')
               .margin({ right: '8lpx' })
 
-              Text('停车收费按照实际情况')
+              Text($r('app.string.card_label_parking_fee'))
                 .fontColor($r('app.color.charging_font_color'))
                 .fontSize('12lpx')
             }
@@ -255,7 +256,7 @@ export struct SiteCardComponent {
               Text(this.carStatus)
                 .fontSize('12lpx')
                 .fontColor($r('app.color.bottom_nav_fontcolor_active'))
-              if (this.carStatus === '点击前往') {
+              if (this.carStatus === resStr(getContext(this), 'common_go_to')) {
                 Text(`${this.distanceKm ? `(${this.distanceKm}Km)` : ''}`)
                   .fontSize('10lpx')
                   .fontColor($r('app.color.bottom_nav_fontcolor_active'))
@@ -275,7 +276,7 @@ export struct SiteCardComponent {
             .backgroundColor('rgba(10, 89, 247, 0.1)')
             .onClick((event?: ClickEvent) => {
               console.info('点击 前往', JSON.stringify(event))
-              if (this.carStatus === '点击前往') {
+              if (this.carStatus === resStr(getContext(this), 'common_go_to')) {
                 this.enterDetail()
               }
             })
@@ -360,14 +361,14 @@ export struct SiteCardComponent {
               Text(`￥${this.siteItemInfo?.chargeFee || this.chargeFee}`)
                 .fontSize('20lpx')
                 .fontColor($r('app.color.chargingPrice_color'))
-              Text('/度起')
+              Text($r('app.string.common_price_per_kwh'))
                 .fontSize('12lpx')
                 .fontColor($r('app.color.charging_font_color'))
             }
 
             Flex({ justifyContent: FlexAlign.End, alignItems: ItemAlign.Center }) {
               Column() {
-                Text(`${(this.siteItemInfo?.chargeType === 1 || this.chargeType) ? '快' : '慢'}`)
+                Text(`${(this.siteItemInfo?.chargeType === 1 || this.chargeType) ? resStr(getContext(this), 'common_label_fast') : resStr(getContext(this), 'common_label_slow')}`)
                   .fontColor($r('app.color.background_color_over'))
                   .fontSize('12lpx')
                   .fontWeight(400)
@@ -384,7 +385,7 @@ export struct SiteCardComponent {
               })
 
               Column() {
-                Text(`${(this.usedCount === this.portCount) ? '忙' : '闲'}${this.siteItemInfo?.usedCount ||
+                Text(`${(this.usedCount === this.portCount) ? resStr(getContext(this), 'common_label_busy') : resStr(getContext(this), 'common_label_idle')}${this.siteItemInfo?.usedCount ||
                 this.usedCount}/${this.siteItemInfo?.portCount || this.portCount}`)
                   .fontSize('12lpx')
               }
@@ -424,7 +425,7 @@ export struct SiteCardComponent {
               .borderRadius('2lpx')
               .margin({ right: '8lpx' })
 
-              Text('停车收费按照实际情况')
+              Text($r('app.string.card_label_parking_fee'))
                 .fontColor($r('app.color.charging_font_color'))
                 .fontSize('12lpx')
             }
@@ -439,7 +440,7 @@ export struct SiteCardComponent {
               Text(this.carStatus)
                 .fontSize('12lpx')
                 .fontColor($r('app.color.bottom_nav_fontcolor_active'))
-              if (this.carStatus === '点击前往') {
+              if (this.carStatus === resStr(getContext(this), 'common_go_to')) {
                 Text(`${this.distanceKm ? `(${this.distanceKm}Km)` : ''}`)
                   .fontSize('10lpx')
                   .fontColor($r('app.color.bottom_nav_fontcolor_active'))
@@ -459,7 +460,7 @@ export struct SiteCardComponent {
             .backgroundColor('rgba(10, 89, 247, 0.1)')
             .onClick((event?: ClickEvent) => {
               console.info('点击 前往', JSON.stringify(event))
-              if (this.carStatus === '点击前往') {
+              if (this.carStatus === resStr(getContext(this), 'common_go_to')) {
                 this.enterDetail()
               }
             })

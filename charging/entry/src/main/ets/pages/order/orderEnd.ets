@@ -27,7 +27,7 @@ export struct OrderEnd {
         }
 
         Row() {
-          Text(resStr(this.context, 'order_end_title'))
+          Text(resStr(getContext(this), 'order_end_title'))
             .fontSize('12lpx')
         }
 
@@ -42,7 +42,7 @@ export struct OrderEnd {
 
         Column() {
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text(resStr(this.context, 'order_end_label_total'))
+            Text(resStr(getContext(this), 'order_end_label_total'))
               .fontColor($r('app.color.charging_font_color'))
               .fontSize('14lpx')
             Row() {
@@ -60,11 +60,11 @@ export struct OrderEnd {
           .margin({ left: '16lpx', right: '16lpx' })
 
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text(resStr(this.context, 'order_end_label_voucher_deduction'))
+            Text(resStr(getContext(this), 'order_end_label_voucher_deduction'))
               .fontColor($r('app.color.charging_font_color'))
               .fontSize('14lpx')
             Row() {
-              Text(resStr(this.context, 'order_end_label_voucher_100'))
+              Text(resStr(getContext(this), 'order_end_label_voucher_100'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('14lpx')
                 .margin({ right: '8lpx' })
@@ -79,7 +79,7 @@ export struct OrderEnd {
           .margin({ left: '16lpx', right: '16lpx' })
 
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text(resStr(this.context, 'order_end_label_discount'))
+            Text(resStr(getContext(this), 'order_end_label_discount'))
               .fontColor($r('app.color.charging_font_color'))
               .fontSize('14lpx')
             Row() {
@@ -104,7 +104,7 @@ export struct OrderEnd {
         btnColor: $r('app.color.F7F5F5'),
         btnFontColor: $r('app.color.longBtn_red'),
         btnBorderColor: $r('app.color.CECECE'),
-        btnName: resStr(this.context, 'order_end_btn_done'),
+        btnName: resStr(getContext(this), 'order_end_btn_done'),
         onEvent: (data: string) => {
           router.pushUrl({
             url: 'pages/Index'

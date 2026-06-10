@@ -8,14 +8,15 @@ import { bundleManager, abilityAccessCtrl, common, PermissionRequestResult, Perm
 import { BusinessError } from '@kit.BasicServicesKit'
 import { map, mapCommon } from '@kit.MapKit'
 import { geoLocationManager } from '@kit.LocationKit'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
 export struct RoutePlanning {
   private TAG = 'HuaweiMapDemo';
   private mapController?: map.MapComponentController;
-  @State startDestination: string = AppStorage.get('startSpot') || '我的位置'
-  @State destination: string = AppStorage.get('endSpot') || '输入目的地'
+  @State startDestination: string = AppStorage.get('startSpot') || ''
+  @State destination: string = AppStorage.get('endSpot') || ''
   @State isSwitch: boolean | undefined = AppStorage.get('switch') || undefined
   @State carInfo: routePlanningCarInfoItem = {
     mileageNumber: 500,
@@ -108,6 +109,12 @@ export struct RoutePlanning {
   }
 
   async aboutToAppear() {
+    if (!this.startDestination) {
+      this.startDestination = resStr(getContext(this), 'route_start_location')
+    }
+    if (!this.destination) {
+      this.destination = resStr(getContext(this), 'route_placeholder_destination')
+    }
     let location = await geoLocationManager.getCurrentLocation();
     // 获取我的位置经纬度
     let startTarget: mapCommon.LatLng = {
@@ -134,7 +141,7 @@ export struct RoutePlanning {
     Stack() {
       Column() {
         HeadComponent({
-          headName: '路线规划',
+          headName: resStr(getContext(this), 'route_head_name'),
           isHaveBtn: false,
           backUrl: 'pages/Index',
           tabs: 1,
@@ -168,7 +175,7 @@ export struct RoutePlanning {
               } else {
                 Text(this.destination)
                   .width('100%')
-                  .fontColor(this.destination === '输入目的地' ? $r('app.color.aeaeae') :
+                  .fontColor(this.destination === resStr(getContext(this), 'route_placeholder_destination') ? $r('app.color.aeaeae') :
                   $r('app.color.historyList_font_color'))
                   .margin({ left: '4lpx', right: '8lpx' })
                   .onClick(() => {
@@ -212,7 +219,7 @@ export struct RoutePlanning {
               } else {
                 Text(this.destination)
                   .width('100%')
-                  .fontColor(this.destination === '输入目的地' ? $r('app.color.aeaeae') :
+                  .fontColor(this.destination === resStr(getContext(this), 'route_placeholder_destination') ? $r('app.color.aeaeae') :
                   $r('app.color.historyList_font_color'))
                   .margin({ left: '4lpx', right: '8lpx' })
                   .onClick(() => {
@@ -260,7 +267,7 @@ export struct RoutePlanning {
         })
 
         Row() {
-          Text('行程偏好')
+          Text($r('app.string.route_label_trip_preference'))
             .margin({ left: '16lpx' })
             .fontSize('16lpx')
         }
@@ -269,7 +276,7 @@ export struct RoutePlanning {
 
         Column() {
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text('续航里程')
+            Text($r('app.string.route_label_mileage'))
               .width('120lpx')
               .fontSize('14lpx')
               .fontColor($r('app.color.charging_font_color'))
@@ -277,7 +284,7 @@ export struct RoutePlanning {
               Text(`${this.carInfo.mileageNumber}`)
                 .fontColor($r('app.color.clear_font_color'))
                 .margin({ right: '8lpx' })
-              Text('公里')
+              Text($r('app.string.route_label_unit_km'))
                 .fontSize('12lpx')
                 .fontColor($r('app.color.999999'))
             }
@@ -287,7 +294,7 @@ export struct RoutePlanning {
           .borderColor({ bottom: $r('app.color.EEEEEE') })
 
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text('出发时SOC值')
+            Text($r('app.string.route_label_start_soc'))
               .fontSize('14lpx')
               .fontColor($r('app.color.charging_font_color'))
               .width('120lpx')
@@ -321,7 +328,7 @@ export struct RoutePlanning {
 
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
             Row() {
-              Text('低电寻站')
+              Text($r('app.string.route_label_low_battery'))
                 .fontSize('14lpx')
                 .fontColor($r('app.color.charging_font_color'))
 
@@ -337,7 +344,7 @@ export struct RoutePlanning {
               this.handlePopup = !this.handlePopup
             })
             .bindPopup(this.handlePopup, {
-              message: '规划线路时，当电量低于设定SOC值，会自动寻找附近充电站',
+              message: resStr(getContext(this), 'route_popup_low_battery_msg'),
               onStateChange: (e) => {
                 this.handlePopup = e.isVisible
               }
@@ -377,21 +384,21 @@ export struct RoutePlanning {
       .height('100%')
 
       LongBtnComponent({
-        btnColor: this.destination === '输入目的地' ? $r('app.color.longBtn_blue_opacity') :
+        btnColor: this.destination === resStr(getContext(this), 'route_placeholder_destination') ? $r('app.color.longBtn_blue_opacity') :
         $r('app.color.longBtn_blue'),
         btnFontColor: $r('app.color.background_color_over'),
-        btnBorderColor: this.destination === '输入目的地' ? $r('app.color.longBtn_blue_opacity') :
+        btnBorderColor: this.destination === resStr(getContext(this), 'route_placeholder_destination') ? $r('app.color.longBtn_blue_opacity') :
         $r('app.color.longBtn_blue'),
-        btnName: '开始规划',
+        btnName: resStr(getContext(this), 'route_btn_start_planning'),
         onEvent: (data: string) => {
-          if (this.destination === '输入目的地') {
+          if (this.destination === resStr(getContext(this), 'route_placeholder_destination')) {
             promptAction.showToast({
-              message: '请输入目的地'
+              message: resStr(getContext(this), 'route_toast_input_dest')
             })
             return
           }
           if (this.startDestination === this.destination) {
-            useToastHook('起始结束地址不能相同', '40lpx')
+            useToastHook(resStr(getContext(this), 'route_toast_same_address'), '40lpx')
             return
           }
           console.info('接口 -开始规划 ', JSON.stringify(this.carInfo))

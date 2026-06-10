@@ -15,6 +15,7 @@ import { ListColumn } from '../../utils/ListColumn';
 import { Tmp } from '../../model/class';
 import { getStationDetail } from '../../api/HomeApi';
 import { JSON } from '@kit.ArkTS';
+import { resStr } from '../../utils/i18n';
 
 let dataBase = DataBaseService.getInstance()
 
@@ -23,11 +24,11 @@ let dataBase = DataBaseService.getInstance()
 export struct SiteSearch {
   scroller: Scroller = new Scroller()
   @State @Watch('onChangeKeyWord') keyWord: string = ''
-  @State @Watch('onChangeTabName') tabName: string = '常去站点'
-  @State tab1: string = '常去站点'
-  @State tab2: string = '收藏站点'
+  @State @Watch('onChangeTabName') tabName: string = ''
+  @State tab1: string = ''
+  @State tab2: string = ''
   @State historyList: Array<string> = []
-  @State carStatus: string = '点击前往'
+  @State carStatus: string = ''
   @State spotCollectList: CollectionListItem[] = []
   @State offsetOnSpotList: StationListItemReturning[] = []
   @State lazyLoading: boolean = false
@@ -124,6 +125,10 @@ export struct SiteSearch {
   }
 
   async aboutToAppear() {
+    this.tab1 = resStr(getContext(this), 'search_tab_often')
+    this.tab2 = resStr(getContext(this), 'search_tab_collect')
+    this.tabName = this.tab1
+    this.carStatus = resStr(getContext(this), 'common_go_to')
     // 避免耗时接口
     hiTraceMeter.startTrace('getStringSyncAfter', 1)
     this.getUIContext().getHostContext()!.resourceManager.getStringSync($r('app.string.test'))
@@ -151,7 +156,7 @@ export struct SiteSearch {
   @Builder
   cancelBtn() {
     Column() {
-      Text('搜索')
+      Text($r('app.string.search_btn_search'))
         .fontColor($r('app.color.bottom_nav_fontcolor'))
         .fontSize('16lpx')
         .width('32lpx')
@@ -198,7 +203,7 @@ export struct SiteSearch {
   build() {
     Column() {
       HeadComponent({
-        headName: '查找站点',
+        headName: resStr(getContext(this), 'site_search_head_name'),
         isHaveBtn: false
       })
       SearchComponent({
@@ -315,7 +320,7 @@ export struct SiteSearch {
           LoadingProgress()
             .width('30lpx')
             .height('30lpx')
-          Text('加载中')
+          Text($r('app.string.common_loading_short'))
             .margin({ left: '10lpx' })
         }.justifyContent(FlexAlign.Center)
         .padding('15lpx')
@@ -325,7 +330,7 @@ export struct SiteSearch {
             .margin({ top: '48lpx' })
             .width('120lpx')
             .height('120lpx')
-          Text('没有找到相关站点')
+          Text($r('app.string.search_empty'))
             .fontSize('12lpx')
             .fontColor($r('app.color.999999'))
         }

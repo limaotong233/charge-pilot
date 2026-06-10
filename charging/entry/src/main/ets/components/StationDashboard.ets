@@ -2,6 +2,7 @@ import { router } from '@kit.ArkUI'
 import { StationListItemReturning, StationPortListReturning } from '../model/interface/api/HomeApiInterface'
 import { getStationPortList } from '../api/HomeApi'
 import { LongBtnComponent } from './longBtnComponent'
+import { resStr } from '../utils/i18n'
 
 @Component
 export struct StationDashboard {
@@ -30,9 +31,9 @@ export struct StationDashboard {
 
   // 桩口状态文本
   private getStatusText(status: number): string {
-    if (status === 0) return '空闲'
-    if (status === 1) return '已预约'
-    return '充电中'
+    if (status === 0) return resStr(getContext(this), 'common_status_free')
+    if (status === 1) return resStr(getContext(this), 'common_status_reserved')
+    return resStr(getContext(this), 'common_status_charging')
   }
 
   // 桩口状态颜色
@@ -54,13 +55,13 @@ export struct StationDashboard {
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
           Row() {
-            Text(this.siteItem.chargeType === 1 ? '快充' : '慢充')
+            Text(this.siteItem.chargeType === 1 ? $r('app.string.common_label_fast_charge') : $r('app.string.common_label_slow_charge'))
               .fontSize('11lpx')
               .fontColor('#FFFFFF')
               .backgroundColor(this.siteItem.chargeType === 1 ? '#4CAF50' : '#FF9800')
               .borderRadius('4lpx')
               .padding({ left: '6lpx', right: '6lpx', top: '2lpx', bottom: '2lpx' })
-            Text(`¥${this.siteItem.chargeFee}/度`)
+            Text(`¥${this.siteItem.chargeFee}` + resStr(getContext(this), 'common_price_per_kwh'))
               .fontSize('11lpx')
               .fontColor('#999999')
               .margin({ left: '6lpx' })
@@ -75,7 +76,7 @@ export struct StationDashboard {
       // 根据是否已选择桩口显示不同内容
       if (this.selectedPort === null) {
         // ====== 阶段1：选择充电桩 ======
-        Text('请选择充电桩')
+        Text($r('app.string.dashboard_label_select_port'))
           .fontSize('14lpx')
           .fontColor('#666666')
           .margin({ top: '12lpx' })
@@ -97,7 +98,7 @@ export struct StationDashboard {
                     .fontSize('15lpx')
                     .fontWeight(FontWeight.Medium)
                     .fontColor('#333333')
-                  Text(`${port.chargePower}kW · ¥${port.chargeFee}/度`)
+                  Text(`${port.chargePower}` + resStr(getContext(this), 'dashboard_label_power') + ` · ¥${port.chargeFee}` + resStr(getContext(this), 'dashboard_label_price'))
                     .fontSize('12lpx')
                     .fontColor('#999999')
                     .margin({ top: '2lpx' })
@@ -128,7 +129,7 @@ export struct StationDashboard {
           // 分隔线
           Row() {
             Divider().layoutWeight(1).color('#EEEEEE')
-            Text('或').fontSize('12lpx').fontColor('#999999').margin({ left: '8lpx', right: '8lpx' })
+            Text($r('app.string.dashboard_label_or')).fontSize('12lpx').fontColor('#999999').margin({ left: '8lpx', right: '8lpx' })
             Divider().layoutWeight(1).color('#EEEEEE')
           }
           .width('100%')
@@ -136,7 +137,7 @@ export struct StationDashboard {
 
           // 扫码选择按钮
           Row() {
-            Text('扫码选择充电桩')
+            Text($r('app.string.dashboard_btn_scan_port'))
               .fontSize('14lpx')
               .fontColor('#2196F3')
               .padding({ left: '24lpx', right: '24lpx', top: '10lpx', bottom: '10lpx' })
@@ -162,7 +163,7 @@ export struct StationDashboard {
             .fontSize('14lpx')
             .fontColor('#666666')
           // 切换桩口
-          Text('切换')
+          Text($r('app.string.dashboard_label_switch'))
             .fontSize('12lpx')
             .fontColor('#2196F3')
             .margin({ left: 'auto' })
@@ -180,7 +181,7 @@ export struct StationDashboard {
               .fontSize('22lpx')
               .fontWeight(FontWeight.Bold)
               .fontColor('#2196F3')
-            Text('kW 功率')
+            Text(`${this.selectedPort.chargePower}` + resStr(getContext(this), 'dashboard_label_power'))
               .fontSize('11lpx')
               .fontColor('#999999')
           }
@@ -194,7 +195,7 @@ export struct StationDashboard {
               .fontSize('22lpx')
               .fontWeight(FontWeight.Bold)
               .fontColor('#4CAF50')
-            Text('元/度')
+            Text($r('app.string.dashboard_label_price'))
               .fontSize('11lpx')
               .fontColor('#999999')
           }
@@ -204,11 +205,11 @@ export struct StationDashboard {
           Divider().vertical(true).height('36lpx').color('#EEEEEE')
 
           Column() {
-            Text('就绪')
+            Text($r('app.string.dashboard_label_ready'))
               .fontSize('22lpx')
               .fontWeight(FontWeight.Bold)
               .fontColor('#4CAF50')
-            Text('充电状态')
+            Text($r('app.string.dashboard_label_charge_status'))
               .fontSize('11lpx')
               .fontColor('#999999')
           }
@@ -226,7 +227,7 @@ export struct StationDashboard {
           btnColor: $r('app.color.longBtn_blue'),
           btnFontColor: $r('app.color.background_color_over'),
           btnBorderColor: $r('app.color.longBtn_blue'),
-          btnName: '启动充电',
+          btnName: resStr(getContext(this), 'dashboard_btn_start_charge'),
           onEvent: () => {
             router.pushUrl({
               url: 'pages/charging/inCharging',

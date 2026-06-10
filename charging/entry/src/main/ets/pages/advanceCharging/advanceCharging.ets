@@ -15,6 +15,7 @@ import {
 import { getOrderCreate, getOrderList } from '../../api/OrderApi'
 import { CardService, CardFormData } from '../../service/Card'
 import { ResultVO } from '../../utils/Http'
+import { resStr } from '../../utils/i18n'
 
 @Component
 export struct AdvanceCharging2 {
@@ -74,7 +75,7 @@ export struct AdvanceCharging2 {
   // 预约充电时间段
   getReserveAdd() {
     if (this.MyStationId === '' || this.MyPortId === '') {
-      useToastHook('请先绑定充电桩', '64lpx')
+      useToastHook(resStr(getContext(this), 'adv2_toast_bind_first'), '64lpx')
       return
     }
     let data: ReserveAddVO = {
@@ -87,7 +88,7 @@ export struct AdvanceCharging2 {
     console.info('接口 预约时间', JSON.stringify(data))
     getReserveAdd<string>(data).then((res) => {
       console.info('接口 预约充电', JSON.stringify(res))
-      this.longBtnName = '启动充电'
+      this.longBtnName = resStr(getContext(this), 'charging_btn_start')
       this.getReserveDetail()
       this.timerClock = setInterval(() => {
         this.getReserveDetail()
@@ -118,28 +119,28 @@ export struct AdvanceCharging2 {
         let startT = new Date(res.startTime as string).getTime()
         let endT = new Date(res.endTime as string).getTime()
         if (nowTime < startT) {
-          this.longBtnName = '未到预约时间'
+          this.longBtnName = resStr(getContext(this), 'adv2_btn_not_due')
         } else if (nowTime > endT) {
-          this.longBtnName = '预约时间已过'
+          this.longBtnName = resStr(getContext(this), 'adv2_btn_expired')
         } else {
 
           if (res.portStatus === 1) {
-            this.longBtnName = '启动充电'
+            this.longBtnName = resStr(getContext(this), 'charging_btn_start')
           } else if (res.portStatus === 2) {
-            this.longBtnName = '充电中'
+            this.longBtnName = resStr(getContext(this), 'common_status_charging')
           } else {
-            this.longBtnName = '等待车辆到位中'
+            this.longBtnName = resStr(getContext(this), 'adv2_btn_waiting_vehicle')
           }
         }
         carFormDate = {
           name: res.stationName, // 和卡片布局中对应
           pileNum: res.portName.split('-')[1], // 和卡片布局中对应
-          status: res.portStatus === 0 ? '闲' : '忙',
+          status: res.portStatus === 0 ? resStr(getContext(this), 'common_label_idle') : resStr(getContext(this), 'common_label_busy'),
           beginTime: res.startTime + '',
           endTime: res.endTime + '',
         }
       } else {
-        this.longBtnName = '预约充电'
+        this.longBtnName = resStr(getContext(this), 'adv_charging_reservation')
         this.selectedDate = new Date(new Date().getTime() + (5 * 60 * 1000));
         this.selectedDate2 = new Date()
         this.startTime = customDataFormat(new Date(new Date().getTime() + (5 * 60 * 1000)))
@@ -190,7 +191,7 @@ export struct AdvanceCharging2 {
     console.info('接口 订单列表', JSON.stringify(res))
     if (res) {
       if (res.list.length > 0) {
-        this.longBtnName = '订单正在进行中'
+        this.longBtnName = resStr(getContext(this), 'adv2_btn_order_in_progress')
       }
     }
   }
@@ -223,10 +224,10 @@ export struct AdvanceCharging2 {
   build() {
     Stack({ alignContent: Alignment.BottomStart }) {
       Column() {
-        if (this.longBtnName === '预约充电' || this.longBtnName === '订单正在进行中') {
+        if (this.longBtnName === resStr(getContext(this), 'adv_charging_reservation') || this.longBtnName === resStr(getContext(this), 'adv2_btn_order_in_progress')) {
           Flex({ justifyContent: FlexAlign.End, alignItems: ItemAlign.End }) {
             Column() {
-              Text('虚拟仿真模拟车SUV')
+              Text($r('app.string.adv2_car_name'))
                 .width('100%')
                 .height('24lpx')
                 .fontSize('14lpx')
@@ -242,7 +243,7 @@ export struct AdvanceCharging2 {
               Row() {
                 Button({ type: ButtonType.Capsule, stateEffect: true }) {
                   Row() {
-                    Text('设置').fontSize('12lpx').fontColor($r('app.color.historyList_font_color')).height('20lpx')
+                    Text($r('app.string.adv2_btn_settings')).fontSize('12lpx').fontColor($r('app.color.historyList_font_color')).height('20lpx')
                   }.alignItems(VerticalAlign.Center).height('20lpx').margin({ left: '12lpx', right: '12lpx' })
                 }
                 .backgroundColor($r('app.color.background_color_over'))
@@ -277,7 +278,7 @@ export struct AdvanceCharging2 {
           .backgroundColor($r('app.color.background_color_over'))
 
           Flex({ justifyContent: FlexAlign.SpaceBetween }) {
-            Text('我的有序桩')
+            Text(resStr(getContext(this), 'adv_charging_my_ordered_pile'))
               .fontSize('14lpx')
             // .margin({right: '24lpx'})
             Row() {
@@ -320,7 +321,7 @@ export struct AdvanceCharging2 {
           Column() {
             Flex({ justifyContent: FlexAlign.SpaceBetween }) {
 
-              Text('起始时间')
+              Text($r('app.string.adv2_label_start_time'))
                 .fontSize('14lpx')
                 .width('70lpx')
               Row() {
@@ -341,7 +342,7 @@ export struct AdvanceCharging2 {
                   showTime: true,
                   onDateAccept: (value: Date) => {
                     if (value < new Date()) {
-                      useToastHook('起始时间不能早于当前时间', '40lpx')
+                      useToastHook(resStr(getContext(this), 'adv2_toast_start_not_early'), '40lpx')
                       return
                     }
                     let end = value.getTime() + (60 * 60 * 1000)
@@ -354,7 +355,7 @@ export struct AdvanceCharging2 {
                   },
                   onDateChange: (value: Date) => {
                     if (value < new Date()) {
-                      useToastHook('起始时间不能早于当前时间', '40lpx')
+                      useToastHook(resStr(getContext(this), 'adv2_toast_start_not_early'), '40lpx')
                       return
                     }
                   }
@@ -367,7 +368,7 @@ export struct AdvanceCharging2 {
 
             Flex({ justifyContent: FlexAlign.SpaceBetween }) {
 
-              Text('截止时间')
+              Text($r('app.string.adv2_label_end_time'))
                 .fontSize('14lpx')
               Row() {
                 Text(this.endTime)
@@ -408,24 +409,24 @@ export struct AdvanceCharging2 {
           btnBorderColor: $r('app.color.longBtn_blue'),
           btnName: this.longBtnName,
           onEvent: (data: string) => {
-            if (this.longBtnName === '预约充电' && (this.startTime === '' || this.endTime === '')) {
+            if (this.longBtnName === resStr(getContext(this), 'adv_charging_reservation') && (this.startTime === '' || this.endTime === '')) {
               promptAction.showToast({
-                message: '请选择充电时间段',
+                message: resStr(getContext(this), 'adv2_toast_select_time'),
                 duration: 2000
               })
               return
             }
             console.info(`接口 时间差 ${this.selectedDate2.getTime() - this.selectedDate.getTime()}`)
-            if (this.longBtnName === '预约充电' && (this.MyStationName === '' || this.MyPortName === '')) {
+            if (this.longBtnName === resStr(getContext(this), 'adv_charging_reservation') && (this.MyStationName === '' || this.MyPortName === '')) {
               promptAction.showToast({
-                message: '请绑定充电桩',
+                message: resStr(getContext(this), 'adv2_toast_bind_pile'),
                 duration: 2000
               })
               return
             }
-            if (this.longBtnName === '预约充电') {
+            if (this.longBtnName === resStr(getContext(this), 'adv_charging_reservation')) {
               this.getReserveAdd()
-            } else if (this.longBtnName === '启动充电') {
+            } else if (this.longBtnName === resStr(getContext(this), 'charging_btn_start')) {
               this.getOrderCreate()
             }
           }

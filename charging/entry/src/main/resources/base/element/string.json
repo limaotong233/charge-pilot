@@ -286,6 +286,14 @@
     {"name": "head_back_my_coupons", "value": "我的卡券"},
     {"name": "head_back_site_detail", "value": "站点详情"},
 
-    {"name": "btn_save_settings", "value": "保存设置"}
+    {"name": "btn_save_settings", "value": "保存设置"},
+
+    {"name": "adv_charging_error_station_empty", "value": "充电站名称不能为空"},
+    {"name": "adv_charging_error_port_empty", "value": "充电桩编号不能为空"},
+    {"name": "adv_charging_binding", "value": "绑定充电桩中"},
+    {"name": "common_save_settings", "value": "保存设置"},
+    {"name": "search_clear_history", "value": "清空搜索历史"},
+    {"name": "card_coupons_toast_voucher_full", "value": "您领取的代金券已满10张"},
+    {"name": "collect_data_loaded", "value": "条数据已加载"}
   ]
 }

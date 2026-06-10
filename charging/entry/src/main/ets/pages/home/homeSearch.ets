@@ -20,6 +20,7 @@ import { ListColumn } from '../../utils/ListColumn';
 import { getDistance } from '../../utils/tools';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { Tmp } from '../../model/class';
+import { resStr } from '../../utils/i18n';
 
 let dataBase = DataBaseService.getInstance()
 
@@ -28,11 +29,11 @@ let dataBase = DataBaseService.getInstance()
 export struct HomeSearch {
   scroller: Scroller = new Scroller()
   @State @Watch('onChangeKeyWord') keyWord: string = ''
-  @State @Watch('onChangeTabName') tabName: string = '常去站点'
-  @State tab1: string = '常去站点'
-  @State tab2: string = '收藏站点'
+  @State @Watch('onChangeTabName') tabName: string = ''
+  @State tab1: string = ''
+  @State tab2: string = ''
   @State @Watch('onHistoryList') historyList: Array<string> = []
-  @State carStatus: string = '点击前往'
+  @State carStatus: string = ''
   @State spotList: CollectionListItem[] = []
   @State oftenGOList: StationListItemReturning[] = []
   @State searchStationList: StationListItemReturning[] = [] //new MyDataSource()
@@ -209,15 +210,17 @@ export struct HomeSearch {
   }
 
   async aboutToAppear() {
-
-
+    this.tab1 = resStr(getContext(this), 'search_tab_often')
+    this.tab2 = resStr(getContext(this), 'search_tab_collect')
+    this.tabName = this.tab1
+    this.carStatus = resStr(getContext(this), 'common_go_to')
   }
 
   // 取消按钮
   @Builder
   cancelBtn() {
     Column() {
-      Text('取消')
+      Text($r('app.string.common_cancel'))
         .fontColor($r('app.color.bottom_nav_fontcolor'))
         .fontSize('16lpx')
         .width('32lpx')
@@ -336,7 +339,7 @@ export struct HomeSearch {
                 .margin({ top: '48lpx' })
                 .width('120lpx')
                 .height('120lpx')
-              Text('没有找到相关站点')
+              Text($r('app.string.search_empty'))
                 .fontSize('12lpx')
                 .fontColor($r('app.color.999999'))
             }
@@ -383,7 +386,7 @@ export struct HomeSearch {
               .margin({ top: '48lpx' })
               .width('120lpx')
               .height('120lpx')
-            Text('没有找到相关站点')
+            Text($r('app.string.search_empty'))
               .fontSize('12lpx')
               .fontColor($r('app.color.999999'))
           }
@@ -398,7 +401,7 @@ export struct HomeSearch {
                 .margin({right: '6lpx'})
                 .width('14lpx')
                 .height('14lpx')
-              Text(`搜索历史(${this.historyList.length})`).fontSize('12lpx')
+              Text(resStr(getContext(this), 'search_history_title').replace('%d', `${this.historyList.length}`)).fontSize('12lpx')
             }
             .borderColor({ bottom: 'rgba(0,0,0,0.05)' })
             .borderWidth({ bottom: this.historyList.length === 0 ? '0lpx' : '1lpx' })
@@ -445,7 +448,7 @@ export struct HomeSearch {
 
           // 排序选项
           Row() {
-            Text('综合')
+            Text($r('app.string.search_sort_comprehensive'))
               .fontSize('12lpx')
               .fontColor(this.sortBy === 'comprehensive' ? '#2196F3' : '#999999')
               .fontWeight(this.sortBy === 'comprehensive' ? FontWeight.Medium : FontWeight.Normal)
@@ -454,7 +457,7 @@ export struct HomeSearch {
               .borderRadius('14lpx')
               .onClick(() => { this.onChangeSort('comprehensive') })
 
-            Text('距离优先')
+            Text($r('app.string.search_sort_distance'))
               .fontSize('12lpx')
               .fontColor(this.sortBy === 'distance' ? '#2196F3' : '#999999')
               .fontWeight(this.sortBy === 'distance' ? FontWeight.Medium : FontWeight.Normal)
@@ -463,7 +466,7 @@ export struct HomeSearch {
               .borderRadius('14lpx')
               .onClick(() => { this.onChangeSort('distance') })
 
-            Text('价格优先')
+            Text($r('app.string.search_sort_price'))
               .fontSize('12lpx')
               .fontColor(this.sortBy === 'price' ? '#2196F3' : '#999999')
               .fontWeight(this.sortBy === 'price' ? FontWeight.Medium : FontWeight.Normal)
@@ -504,7 +507,7 @@ export struct HomeSearch {
             btnColor: $r('app.color.background_color_over'),
             btnFontColor: $r('app.color.clear_font_color'),
             btnBorderColor: $r('app.color.CECECE'),
-            btnName: '清空搜索历史',
+            btnName: resStr(getContext(this), 'search_clear_history'),
             onEvent: (data: string) => {
               this.tabName = ''
               this.allLoaded = false

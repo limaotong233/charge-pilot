@@ -4,6 +4,7 @@ import { getReserveBindDetail, getReserveUnbind } from '../../api/AdvanceChargin
 import { BindDetailReturning } from '../../model/interface/api/AdvanceChargingApiInterface'
 import { CustomShowToast } from '../../components/customShowToast'
 import { LocalPreferences } from '../../service/LocalPreferences'
+import { resStr } from '../../utils/i18n'
 
 // @Entry
 @Component
@@ -63,7 +64,7 @@ export struct OrderlyPile {
       console.info('接口 解绑充电桩', JSON.stringify(res))
       this.haveCard = true
       this.cusStatus = 'success'
-      this.cusSText = '解绑成功'
+      this.cusSText = resStr(getContext(this), 'pile_toast_unbind_success')
       LocalPreferences.delete('MyStationName')
       LocalPreferences.delete('MyPortName')
       LocalPreferences.delete('MyStationId')
@@ -72,7 +73,7 @@ export struct OrderlyPile {
 
     }).catch((err: Error) => {
       this.cusStatus = 'error'
-      this.cusSText = '解绑失败'
+      this.cusSText = resStr(getContext(this), 'pile_toast_unbind_fail')
 
     })
   }
@@ -96,12 +97,12 @@ export struct OrderlyPile {
 
             })
 
-            Text(`暂无有序桩`)
+            Text($r('app.string.pile_empty_title'))
               .fontSize('14lpx')
               .margin({ bottom: '8lpx' })
               .fontColor($r('app.color.999999'))
               .fontWeight('bold')
-            Text('点击下方按钮进行绑定')
+            Text($r('app.string.pile_empty_hint'))
               .fontSize('12lpx')
               .fontColor($r('app.color.999999'))
               .margin({ bottom: '24lpx' })
@@ -110,7 +111,7 @@ export struct OrderlyPile {
               btnColor: $r('app.color.longBtn_blue'),
               btnFontColor: $r('app.color.background_color_over'),
               btnBorderColor: $r('app.color.longBtn_blue'),
-              btnName: '绑定我的有序桩',
+              btnName: resStr(getContext(this), 'pile_btn_bind'),
               onEvent: (data: string) => {
                 this.onClickBindFunc(true)
               }
@@ -129,7 +130,7 @@ export struct OrderlyPile {
                   Text(this.bindDetail.portName.split('-')[1])
                     .fontSize('24lpx')
                     .fontWeight('bold')
-                  Text('号充电桩')
+                  Text($r('app.string.pile_label_port_suffix'))
                     .fontSize('12lpx')
                     .alignSelf(ItemAlign.Baseline)
                 }
@@ -139,7 +140,7 @@ export struct OrderlyPile {
                 Row() {
                   Button({ type: ButtonType.Capsule, stateEffect: true }) {
                     Row() {
-                      Text('解绑').fontSize('12lpx').fontColor(this.btnFontColor).height('20lpx')
+                      Text($r('app.string.pile_btn_unbind')).fontSize('12lpx').fontColor(this.btnFontColor).height('20lpx')
                     }.alignItems(VerticalAlign.Center).height('20lpx').margin({ left: '12lpx', right: '12lpx' })
                   }
                   .borderColor(this.btnBorderColor)
@@ -155,16 +156,16 @@ export struct OrderlyPile {
                     this.btnBorderColor = $r('app.color.longBtn_blue')
                     promptAction.showDialog({
                       title: '',
-                      message: '此操作将无法恢复，是否继续解绑',
+                      message: resStr(getContext(this), 'pile_dialog_unbind_msg'),
                       isModal: true,
                       shadow: ShadowStyle.OUTER_FLOATING_SM,
                       buttons: [
                         {
-                          text: '取消',
+                          text: resStr(getContext(this), 'common_cancel'),
                           color: $r('app.color.longBtn_blue'),
                         },
                         {
-                          text: '确定',
+                          text: resStr(getContext(this), 'common_confirm'),
                           color: $r('app.color.longBtn_blue')
                         }
                       ]

@@ -106,10 +106,10 @@ export struct InCharging {
       this.updateEstimate()
       if (res.orderStatus === 0) {
         this.formatTime(res.chargeTime)
-        this.chargingBtnName = resStr(this.context, 'charging_btn_end')
+        this.chargingBtnName = resStr(getContext(this), 'charging_btn_end')
         this.chargingStatus = 0
       } else if (res.orderStatus === 1) {
-        this.chargingBtnName = resStr(this.context, 'charging_btn_pending_payment')
+        this.chargingBtnName = resStr(getContext(this), 'charging_btn_pending_payment')
         this.chargingStatus = 1
       }
     } else {
@@ -124,9 +124,9 @@ export struct InCharging {
     try {
       await getOrderSpeedUp<string>({ orderId })
       this.speedUpActive = true
-      useToastHook(resStr(this.context, 'charging_speedup_on'), '32lpx')
+      useToastHook(resStr(getContext(this), 'charging_speedup_on'), '32lpx')
     } catch (e) {
-      useToastHook(resStr(this.context, 'charging_speedup_fail'), '40lpx')
+      useToastHook(resStr(getContext(this), 'charging_speedup_fail'), '40lpx')
     }
   }
 
@@ -193,7 +193,7 @@ export struct InCharging {
                     let time = new Date()
                     this.requestId = (Math.random() * 10000).toFixed(0) + time.getTime() + ''
                     this.isShowChargingToast = true
-                    this.AISpeech(`${resStr(this.context, 'charging_tts_speech')}${this.chargingTime.toFixed(0)}%`, this.requestId)
+                    this.AISpeech(`${resStr(getContext(this), 'charging_tts_speech')}${this.chargingTime.toFixed(0)}%`, this.requestId)
                   }
                   this.AISpeechTime++
                 }, 1000)
@@ -217,14 +217,14 @@ export struct InCharging {
   }
 
   dialogControllerProgress: CustomDialogController = new CustomDialogController({
-    builder: LoadingDialog({ content: `${this.chargingBtnName}${resStr(this.context, 'charging_loading_dialog_suffix')}` }),
+    builder: LoadingDialog({ content: `${this.chargingBtnName}${resStr(getContext(this), 'charging_loading_dialog_suffix')}` }),
     autoCancel: true,
     backgroundBlurStyle: BlurStyle.COMPONENT_ULTRA_THICK
   })
 
   onChangeBtnStatus() {
     if (this.chargingTime >= 100) {
-      this.chargingBtnName = resStr(this.context, 'charging_btn_end')
+      this.chargingBtnName = resStr(getContext(this), 'charging_btn_end')
       this.chargingStatus = 0
       this.getOrderAmount()
       let context = this.getUIContext().getHostContext() as common.UIAbilityContext
@@ -235,9 +235,9 @@ export struct InCharging {
           content: {
             notificationContentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
             normal: {
-              title: resStr(this.context, 'charging_notification_title'),
-              text: resStr(this.context, 'charging_notification_text'),
-              additionalText: resStr(this.context, 'charging_notification_extra')
+              title: resStr(getContext(this), 'charging_notification_title'),
+              text: resStr(getContext(this), 'charging_notification_text'),
+              additionalText: resStr(getContext(this), 'charging_notification_extra')
             }
           }
         }
@@ -281,8 +281,8 @@ export struct InCharging {
 
   aboutToAppear() {
     router.clear()
-    this.chargingBtnName = resStr(this.context, 'charging_btn_start')
-    this.areaValue = resStr(this.context, 'charging_area_15s')
+    this.chargingBtnName = resStr(getContext(this), 'charging_btn_start')
+    this.areaValue = resStr(getContext(this), 'charging_area_15s')
   }
 
   aboutToDisappear(): void {
@@ -336,7 +336,7 @@ export struct InCharging {
       btnColor: $r('app.color.longBtn_blue'),
       btnFontColor: $r('app.color.background_color_over'),
       btnBorderColor: $r('app.color.longBtn_blue'),
-      btnName: resStr(this.context, 'btn_save_settings'),
+      btnName: resStr(getContext(this), 'btn_save_settings'),
       onEvent: () => {
         this.startContinuousTask()
         this.isShowAudioDialog = false
@@ -358,7 +358,7 @@ export struct InCharging {
       Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
         Text($r('app.string.charging_label_interval')).width('120lpx')
         Column() {
-          Select([{ value: resStr(this.context, 'charging_area_15s') }, { value: resStr(this.context, 'charging_area_30s') }, { value: resStr(this.context, 'charging_area_1min') }])
+          Select([{ value: resStr(getContext(this), 'charging_area_15s') }, { value: resStr(getContext(this), 'charging_area_30s') }, { value: resStr(getContext(this), 'charging_area_1min') }])
             .selected(this.areaIndex)
             .value(this.areaValue)
             .space(0)
@@ -390,7 +390,7 @@ export struct InCharging {
       Column() {
         // 顶部导航栏
         HeadComponent({
-          headName: resStr(this.context, 'charging_head_name'),
+          headName: resStr(getContext(this), 'charging_head_name'),
           isHaveBtn: true,
           backUrl: 'pages/order/orderList',
           tabs: 0,
@@ -409,12 +409,12 @@ export struct InCharging {
               } else {
                 promptAction.showDialog({
                   title: '',
-                  message: resStr(this.context, 'charging_dialog_voice_auth'),
+                  message: resStr(getContext(this), 'charging_dialog_voice_auth'),
                   isModal: true,
                   shadow: ShadowStyle.OUTER_FLOATING_SM,
                   buttons: [
-                    { text: resStr(this.context, 'common_cancel'), color: $r('app.color.longBtn_blue') },
-                    { text: resStr(this.context, 'common_confirm'), color: $r('app.color.longBtn_blue') }
+                    { text: resStr(getContext(this), 'common_cancel'), color: $r('app.color.longBtn_blue') },
+                    { text: resStr(getContext(this), 'common_confirm'), color: $r('app.color.longBtn_blue') }
                   ]
                 }).then((data) => {
                   if (data.index === 1) {
@@ -491,7 +491,7 @@ export struct InCharging {
 
             // 预计剩余时间
             if (this.estimatedMinutes > 0 && this.chargingTime < 100) {
-              Text(resStr(this.context, 'charging_estimate_remaining').replace('%d', `${this.estimatedMinutes}`))
+              Text(resStr(getContext(this), 'charging_estimate_remaining').replace('%d', `${this.estimatedMinutes}`))
                 .fontSize('13lpx')
                 .fontColor('#999999')
                 .margin({ bottom: '16lpx' })
@@ -573,7 +573,7 @@ export struct InCharging {
               // 加速模拟按钮
               if (this.chargingStatus === 0 && !this.speedUpActive) {
                 Row() {
-                  Text(resStr(this.context, 'charging_btn_speedup'))
+                  Text(resStr(getContext(this), 'charging_btn_speedup'))
                     .fontSize('14lpx')
                     .fontColor('#FF9800')
                     .fontWeight(FontWeight.Medium)
@@ -590,7 +590,7 @@ export struct InCharging {
 
               // 加速中提示
               if (this.speedUpActive && this.chargingTime < 100) {
-                Text(resStr(this.context, 'charging_speedup_active'))
+                Text(resStr(getContext(this), 'charging_speedup_active'))
                   .fontSize('13lpx')
                   .fontColor('#FF9800')
                   .margin({ top: '8lpx' })
@@ -644,7 +644,7 @@ export struct InCharging {
           LoadingProgress()
             .width('48lpx')
             .height('48lpx')
-          Text(resStr(this.context, 'charging_loading_prepare'))
+          Text(resStr(getContext(this), 'charging_loading_prepare'))
             .fontSize('14lpx')
             .fontColor('#999999')
             .margin({ top: '12lpx' })
@@ -669,7 +669,7 @@ export struct InCharging {
       // 顶部充电进度提示
       if (this.isShowChargingToast) {
         Row() {
-          Text(`${resStr(this.context, 'charging_tts_speech')}${this.chargingTime.toFixed(0)}%`)
+          Text(`${resStr(getContext(this), 'charging_tts_speech')}${this.chargingTime.toFixed(0)}%`)
             .fontSize('14lpx')
             .margin({ top: '19lpx', bottom: '17lpx', left: '24lpx', right: '24lpx' })
             .textAlign(TextAlign.Start)
@@ -686,7 +686,7 @@ export struct InCharging {
       if (this.isShowAudioDialog) {
         BottomDialog({
           bdBackgroundColor: $r('app.color.F3F3F3'),
-          bdName: resStr(this.context, 'charging_dialog_voice_title'),
+          bdName: resStr(getContext(this), 'charging_dialog_voice_title'),
           isHaveLongBtn: true,
           MainContent: (): void => { this.mainContent() },
           longBtn: (): void => { this.longBtn() },

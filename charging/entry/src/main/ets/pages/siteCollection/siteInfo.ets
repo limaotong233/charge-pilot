@@ -11,13 +11,14 @@ import { useToastHook } from '../../service'
 import { getDistance } from '../../utils/tools'
 import { addCollectList, cancelCollectList, downLoadFile } from '../../api/CollectionApi'
 import { buffer } from '@kit.ArkTS'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
 export struct SiteInfo {
   scroller: Scroller = new Scroller()
   @State isCollectSite: boolean = true
-  @State activeName: string = '站点详情'
+  @State activeName: string = ''
   @State siteList: StationPortListReturning[] = []
   @State stationDetail: StationDetailReturning | null = null
   @State siteItemInfo: StationListItemReturning | null = null
@@ -27,7 +28,7 @@ export struct SiteInfo {
   AddCollect() {
     addCollectList<string>({ stationId: this.stationDetail?.stationId as string }).then((res) => {
       console.info('接口 添加收藏', res)
-      useToastHook('收藏成功', '32lpx')
+      useToastHook(resStr(getContext(this), 'common_collect_success'), '32lpx')
       this.getStationDetailReturning()
     })
   }
@@ -36,7 +37,7 @@ export struct SiteInfo {
   CancelCollect() {
     cancelCollectList<string>({ stationId: this.stationDetail?.stationId as string }).then((res) => {
       console.info('接口 取消收藏', res)
-      useToastHook('取消收藏', '32lpx')
+      useToastHook(resStr(getContext(this), 'common_cancel_collect'), '32lpx')
       this.getStationDetailReturning()
     })
   }
@@ -47,7 +48,7 @@ export struct SiteInfo {
       console.info('接口 进站信息', JSON.stringify(res))
       if (res) {
         this.siteItemInfo = res as StationListItemReturning
-        useToastHook('请先退出站点，再前往', '40lpx')
+        useToastHook(resStr(getContext(this), 'common_exit_station_first'), '40lpx')
         return
       } else {
         AppStorage.setOrCreate('continueEndTarget',
@@ -56,7 +57,7 @@ export struct SiteInfo {
         AppStorage.setOrCreate('continueIsShowSheet', true)
 
         // this.carStatus = '正在前往'
-        AppStorage.setOrCreate('continueCarStatus', '正在前往')
+        AppStorage.setOrCreate('continueCarStatus', resStr(getContext(this), 'common_navigating'))
         AppStorage.setOrCreate('routerParamsSiteInfo', this.stationDetail)
         router.pushUrl({
           url: 'pages/Index',
@@ -96,13 +97,14 @@ export struct SiteInfo {
   }
 
   aboutToAppear(): void {
+    this.activeName = resStr(getContext(this), 'site_info_tab_detail')
     this.getStationDetailReturning()
   }
 
   build() {
     Column() {
       HeadComponent({
-        headName: '站点详情',
+        headName: resStr(getContext(this), 'site_info_head_name'),
         isHaveBtn: true,
         btnScr: this.stationDetail?.isCollect === 1 ? $r('app.media.siteCollection_star') :
         $r('app.media.siteCollection_star1'),
@@ -134,7 +136,7 @@ export struct SiteInfo {
                   .width('16lpx')
                   .height('16lpx')
                   .margin({ right: '8lpx' })
-                Text(this.stationDetail?.openTime.split(' ')[1] || '00:00 ~ 24:00营业')
+                Text(this.stationDetail?.openTime.split(' ')[1] || resStr(getContext(this), 'site_info_default_hours'))
                   .fontSize('12lpx')
                   .fontColor($r('app.color.charging_font_color'))
               }
@@ -156,7 +158,7 @@ export struct SiteInfo {
 
             Flex({ justifyContent: FlexAlign.End, alignItems: ItemAlign.Center }) {
               Column() {
-                Text(this.stationDetail?.chargeType === 1 ? `快` : `慢`)
+                Text(this.stationDetail?.chargeType === 1 ? $r('app.string.common_label_fast') : $r('app.string.common_label_slow'))
                   .fontColor($r('app.color.background_color_over'))
                   .fontSize('12lpx')
                   .fontWeight(400)
@@ -173,8 +175,8 @@ export struct SiteInfo {
               })
 
               Column() {
-                Text(`${this.stationDetail?.usedCount === this.stationDetail?.portCount ? '忙' :
-                  '闲'}${this.stationDetail?.usedCount}/${this.stationDetail?.portCount}`)
+                Text(`${this.stationDetail?.usedCount === this.stationDetail?.portCount ? resStr(getContext(this), 'common_label_busy') :
+                  resStr(getContext(this), 'common_label_idle')}${this.stationDetail?.usedCount}/${this.stationDetail?.portCount}`)
                   .fontSize('12lpx')
               }
               .borderColor($r('app.color.tag_background'))
@@ -214,7 +216,7 @@ export struct SiteInfo {
               .margin({ right: '8lpx' })
 
               Row() {
-                Text(`鸿蒙智能充电停车场`)
+                Text(resStr(getContext(this), 'site_info_label_parking'))
                   .fontColor($r('app.color.charging_font_color'))
                   .fontSize('12lpx')
               }
@@ -253,7 +255,7 @@ export struct SiteInfo {
         .backgroundColor($r('app.color.background_color_over'))
 
         Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-          Text('站点详情')
+          Text(resStr(getContext(this), 'site_info_tab_detail'))
             .width('50%')
             .fontSize('12lpx')
             .fontColor(this.activeName === '站点详情' ? $r('app.color.historyList_font_color') :
@@ -266,7 +268,7 @@ export struct SiteInfo {
             .onClick(() => {
               this.activeName = '站点详情'
             })
-          Text('终端列表')
+          Text(resStr(getContext(this), 'site_info_tab_terminals'))
             .width('50%')
             .fontSize('12lpx')
             .fontColor(this.activeName === '终端列表' ? $r('app.color.historyList_font_color') :
@@ -290,7 +292,7 @@ export struct SiteInfo {
           Column() {
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
               Column() {
-                Text('充电费用')
+                Text($r('app.string.site_info_label_charge_fee'))
                   .fontSize('12lpx')
                   .fontColor($r('app.color.historyList_font_color'))
                   .margin({ bottom: '4lpx' })
@@ -309,7 +311,7 @@ export struct SiteInfo {
                   .fontColor($r('app.color.chargingPrice_color'))
                   .width('100%')
                   .textAlign(TextAlign.End)
-                Text('/度起')
+                Text($r('app.string.common_price_per_kwh'))
                   .fontSize('12lpx')
                   .fontColor($r('app.color.charging_font_color'))
                   .width('100%')
@@ -321,13 +323,13 @@ export struct SiteInfo {
             .borderWidth({ bottom: '1lpx' })
             .borderColor({ bottom: 'rgba(0,0,0,0.05)' })
 
-            Text('营业信息')
+            Text($r('app.string.site_info_label_business_info'))
               .fontSize('12lpx')
               .fontColor($r('app.color.historyList_font_color'))
               .margin({ top: '12lpx' })
               .width('100%')
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('服务提供')
+              Text($r('app.string.site_info_label_service_provider'))
                 .padding({
                   top: '6lpx',
                   bottom: '6lpx',
@@ -344,7 +346,7 @@ export struct SiteInfo {
             }.margin({ top: '8lpx' })
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('开放时间')
+              Text($r('app.string.site_info_label_open_time'))
                 .padding({
                   top: '6lpx',
                   bottom: '6lpx',
@@ -361,7 +363,7 @@ export struct SiteInfo {
             }.margin({ top: '8lpx' })
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('支付方式')
+              Text($r('app.string.site_info_label_payment_method'))
                 .padding({
                   top: '6lpx',
                   bottom: '6lpx',
@@ -378,7 +380,7 @@ export struct SiteInfo {
             }.margin({ top: '8lpx' })
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('发票类型')
+              Text($r('app.string.site_info_label_invoice_type'))
                 .padding({
                   top: '6lpx',
                   bottom: '6lpx',
@@ -419,7 +421,7 @@ export struct SiteInfo {
                           'rgba(100, 189, 92, 0.15)')
                         .borderRadius({ topLeft: '8lpx', topRight: '8lpx' })
 
-                        Text(item.portStatus === 1 ? '充电中' : '空闲')
+                        Text(item.portStatus === 1 ? resStr(getContext(this), 'common_status_charging') : resStr(getContext(this), 'common_status_free'))
                           .width('100%')
                           .padding({ top: '4lpx', bottom: '4lpx' })
                           .fontSize('10lpx')
@@ -441,7 +443,7 @@ export struct SiteInfo {
                           Text(`桩编码：${item.portName || '--'}`)
                             .fontSize('10lpx')
                             .fontColor($r('app.color.charging_font_color'))
-                          Text('直流')
+                          Text($r('app.string.site_info_label_dc'))
                             .fontSize('10lpx')
                             .fontColor($r('app.color.longBtn_blue'))
                             .borderRadius('10lpx')

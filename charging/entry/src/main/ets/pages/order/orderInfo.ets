@@ -45,15 +45,15 @@ export struct OrderInfo {
         let time = Number(((endTime - startTime) / 1000).toFixed(0))
         if (isNaN(time) || time < 0) time = 0
         if (time > 3600) {
-          this.timeDifferent = `${(time / 3600).toFixed(0)}${resStr(this.context, 'order_info_unit_hour')}`
+          this.timeDifferent = `${(time / 3600).toFixed(0)}${resStr(getContext(this), 'order_info_unit_hour')}`
         } else if (time > 60) {
-          this.timeDifferent = `${(time / 60).toFixed(0)}${resStr(this.context, 'order_info_unit_minute')}`
+          this.timeDifferent = `${(time / 60).toFixed(0)}${resStr(getContext(this), 'order_info_unit_minute')}`
         } else {
-          this.timeDifferent = `${time}${resStr(this.context, 'order_info_unit_second')}`
+          this.timeDifferent = `${time}${resStr(getContext(this), 'order_info_unit_second')}`
         }
       }
     } catch (e) {
-      useToastHook(resStr(this.context, 'order_info_toast_load_fail'), '40lpx')
+      useToastHook(resStr(getContext(this), 'order_info_toast_load_fail'), '40lpx')
     } finally {
       this.pageLoading = false
     }
@@ -71,7 +71,7 @@ export struct OrderInfo {
         }
       })
     }).catch((err: ResultVO<string>) => {
-      useToastHook(err.msg || resStr(this.context, 'order_info_toast_pay_fail'), '40lpx')
+      useToastHook(err.msg || resStr(getContext(this), 'order_info_toast_pay_fail'), '40lpx')
     })
   }
 
@@ -80,7 +80,7 @@ export struct OrderInfo {
     let pasteData = pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, text)
     let systemPasteboard = pasteboard.getSystemPasteboard()
     await systemPasteboard.setData(pasteData)
-    useToastHook(resStr(this.context, 'order_info_toast_copied'), '40lpx')
+    useToastHook(resStr(getContext(this), 'order_info_toast_copied'), '40lpx')
   }
 
   aboutToAppear(): void {
@@ -92,7 +92,7 @@ export struct OrderInfo {
     Stack({ alignContent: Alignment.BottomStart }) {
       Column() {
         HeadComponent({
-          headName: resStr(this.context, 'order_info_head_name'),
+          headName: resStr(getContext(this), 'order_info_head_name'),
           isHaveBtn: false,
           backUrl: 'pages/order/orderList',
           receive: () => {}
@@ -101,7 +101,7 @@ export struct OrderInfo {
         if (this.pageLoading) {
           Column() {
             LoadingProgress().width('40lpx').height('40lpx')
-            Text(resStr(this.context, 'common_loading')).fontSize('14lpx').fontColor('#999999').margin({ top: '12lpx' })
+            Text(resStr(getContext(this), 'common_loading')).fontSize('14lpx').fontColor('#999999').margin({ top: '12lpx' })
           }
           .width('100%')
           .layoutWeight(1)
@@ -114,12 +114,12 @@ export struct OrderInfo {
               .height('36lpx')
               .margin({ right: '16lpx' })
             Column() {
-              Text(this.orderDetail?.orderStatus === 0 ? resStr(this.context, 'order_info_status_in_progress') :
-                this.orderDetail?.orderStatus === 1 ? resStr(this.context, 'order_info_status_pending') :
-                  this.orderDetail?.orderStatus === 2 ? resStr(this.context, 'order_info_status_completed') : '')
+              Text(this.orderDetail?.orderStatus === 0 ? resStr(getContext(this), 'order_info_status_in_progress') :
+                this.orderDetail?.orderStatus === 1 ? resStr(getContext(this), 'order_info_status_pending') :
+                  this.orderDetail?.orderStatus === 2 ? resStr(getContext(this), 'order_info_status_completed') : '')
                 .fontSize('16lpx').width('100%')
               Row() {
-                Text(`${resStr(this.context, 'order_info_label_order_no')}${this.orderDetail?.orderNo || '-'}`)
+                Text(`${resStr(getContext(this), 'order_info_label_order_no')}${this.orderDetail?.orderNo || '-'}`)
                   .fontSize('12lpx')
                   .margin({ right: '8lpx' })
                 Image($r('app.media.order_copyIcon'))
@@ -138,7 +138,7 @@ export struct OrderInfo {
 
           Column() {
             Row() {
-              Text(resStr(this.context, 'order_info_label_charging_info'))
+              Text(resStr(getContext(this), 'order_info_label_charging_info'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('16lpx')
             }
@@ -158,7 +158,7 @@ export struct OrderInfo {
               .fontSize('14lpx')
               .width('100%')
               .padding({ bottom: '8lpx', left: '16lpx', right: '16lpx' })
-            Text(`${resStr(this.context, 'order_info_label_port_code')}${this.orderDetail?.portName || '-'}`)
+            Text(`${resStr(getContext(this), 'order_info_label_port_code')}${this.orderDetail?.portName || '-'}`)
               .fontColor($r('app.color.historyList_font_color'))
               .fontSize('12lpx')
               .width('100%')
@@ -167,8 +167,8 @@ export struct OrderInfo {
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
               Column() {
                 Text(this.orderDetail?.startTime ?
-                  `${this.orderDetail?.startTime.split(' ')[0].split('-')[1]}${resStr(this.context, 'order_info_unit_month')}${this.orderDetail?.startTime.split(' ')[0].split('-')[2]}${resStr(this.context, 'order_info_unit_day')}` :
-                  `-${resStr(this.context, 'order_info_unit_month')}-${resStr(this.context, 'order_info_unit_day')}`)
+                  `${this.orderDetail?.startTime.split(' ')[0].split('-')[1]}${resStr(getContext(this), 'order_info_unit_month')}${this.orderDetail?.startTime.split(' ')[0].split('-')[2]}${resStr(getContext(this), 'order_info_unit_day')}` :
+                  `-${resStr(getContext(this), 'order_info_unit_month')}-${resStr(getContext(this), 'order_info_unit_day')}`)
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('12lpx')
                   .width('100%')
@@ -196,7 +196,7 @@ export struct OrderInfo {
                   .width('142lpx')
                   .height('8lpx')
                   .margin({ top: '8lpx', bottom: '8lpx' })
-                Text(resStr(this.context, 'order_info_label_duration'))
+                Text(resStr(getContext(this), 'order_info_label_duration'))
                   .fontColor($r('app.color.charging_font_color'))
                   .fontSize('12lpx')
                   .width('100%')
@@ -206,8 +206,8 @@ export struct OrderInfo {
 
               Column() {
                 Text(this.orderDetail?.endTime ?
-                  `${this.orderDetail?.endTime.split(' ')[0].split('-')[1]}${resStr(this.context, 'order_info_unit_month')}${this.orderDetail?.endTime.split(' ')[0].split('-')[2]}${resStr(this.context, 'order_info_unit_day')}` :
-                  `-${resStr(this.context, 'order_info_unit_month')}-${resStr(this.context, 'order_info_unit_day')}`)
+                  `${this.orderDetail?.endTime.split(' ')[0].split('-')[1]}${resStr(getContext(this), 'order_info_unit_month')}${this.orderDetail?.endTime.split(' ')[0].split('-')[2]}${resStr(getContext(this), 'order_info_unit_day')}` :
+                  `-${resStr(getContext(this), 'order_info_unit_month')}-${resStr(getContext(this), 'order_info_unit_day')}`)
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('12lpx')
                   .width('100%')
@@ -229,7 +229,7 @@ export struct OrderInfo {
             }
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text(resStr(this.context, 'order_info_label_total_kwh'))
+              Text(resStr(getContext(this), 'order_info_label_total_kwh'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('12lpx')
               Row() {
@@ -253,7 +253,7 @@ export struct OrderInfo {
 
           Column() {
             Row() {
-              Text(resStr(this.context, 'order_info_label_fee_info'))
+              Text(resStr(getContext(this), 'order_info_label_fee_info'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('16lpx')
             }
@@ -263,7 +263,7 @@ export struct OrderInfo {
             .width('100%')
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text(resStr(this.context, 'order_info_label_electricity_fee'))
+              Text(resStr(getContext(this), 'order_info_label_electricity_fee'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('12lpx')
               Row() {
@@ -293,7 +293,7 @@ export struct OrderInfo {
           btnColor: $r('app.color.longBtn_blue'),
           btnFontColor: $r('app.color.background_color_over'),
           btnBorderColor: $r('app.color.longBtn_blue'),
-          btnName: resStr(this.context, 'order_info_btn_pay_now'),
+          btnName: resStr(getContext(this), 'order_info_btn_pay_now'),
           onEvent: (data: string) => {
             this.isShowMarkLayer = true
           }
@@ -317,7 +317,7 @@ export struct OrderInfo {
           Column() {
             // 标题栏
             Row() {
-              Text(resStr(this.context, 'order_info_sheet_title'))
+              Text(resStr(getContext(this), 'order_info_sheet_title'))
                 .fontSize('20lpx')
                 .fontWeight(FontWeight.Bold)
               Blank()
@@ -345,7 +345,7 @@ export struct OrderInfo {
 
             // 充电站名称
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text(resStr(this.context, 'order_info_sheet_station_name'))
+              Text(resStr(getContext(this), 'order_info_sheet_station_name'))
                 .fontColor($r('app.color.charging_font_color'))
                 .fontSize('14lpx')
               Text(this.orderDetail?.stationName || '-')
@@ -360,10 +360,10 @@ export struct OrderInfo {
 
             // 付款方式
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text(resStr(this.context, 'order_info_sheet_payment_method'))
+              Text(resStr(getContext(this), 'order_info_sheet_payment_method'))
                 .fontColor($r('app.color.charging_font_color'))
                 .fontSize('14lpx')
-              Text(resStr(this.context, 'order_info_sheet_voucher'))
+              Text(resStr(getContext(this), 'order_info_sheet_voucher'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('14lpx')
             }
@@ -375,7 +375,7 @@ export struct OrderInfo {
               btnColor: $r('app.color.longBtn_red'),
               btnFontColor: $r('app.color.background_color_over'),
               btnBorderColor: $r('app.color.longBtn_red'),
-              btnName: resStr(this.context, 'order_info_btn_confirm_pay'),
+              btnName: resStr(getContext(this), 'order_info_btn_confirm_pay'),
               onEvent: () => {
                 this.getOrderPay()
               }
