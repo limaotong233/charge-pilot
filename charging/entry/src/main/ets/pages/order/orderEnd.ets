@@ -1,11 +1,13 @@
 import { LongBtnComponent } from '../../components/longBtnComponent'
 import { router } from '@kit.ArkUI'
 import { OrderPayPrice } from '../../model/interface/api/OrderApiInterface'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
 export struct OrderEnd {
   @State params: OrderPayPrice = router.getParams() as OrderPayPrice || { price: '0' } as OrderPayPrice
+  private context: Context = getContext(this)
 
   // 安全获取价格数值
   private getPrice(): number {
@@ -25,7 +27,7 @@ export struct OrderEnd {
         }
 
         Row() {
-          Text('支付成功')
+          Text(resStr(this.context, 'order_end_title'))
             .fontSize('12lpx')
         }
 
@@ -40,7 +42,7 @@ export struct OrderEnd {
 
         Column() {
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text('总金额')
+            Text(resStr(this.context, 'order_end_label_total'))
               .fontColor($r('app.color.charging_font_color'))
               .fontSize('14lpx')
             Row() {
@@ -58,11 +60,11 @@ export struct OrderEnd {
           .margin({ left: '16lpx', right: '16lpx' })
 
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text('抵扣代金券')
+            Text(resStr(this.context, 'order_end_label_voucher_deduction'))
               .fontColor($r('app.color.charging_font_color'))
               .fontSize('14lpx')
             Row() {
-              Text('100元代金券')
+              Text(resStr(this.context, 'order_end_label_voucher_100'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('14lpx')
                 .margin({ right: '8lpx' })
@@ -77,7 +79,7 @@ export struct OrderEnd {
           .margin({ left: '16lpx', right: '16lpx' })
 
           Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-            Text('立减金额')
+            Text(resStr(this.context, 'order_end_label_discount'))
               .fontColor($r('app.color.charging_font_color'))
               .fontSize('14lpx')
             Row() {
@@ -102,7 +104,7 @@ export struct OrderEnd {
         btnColor: $r('app.color.F7F5F5'),
         btnFontColor: $r('app.color.longBtn_red'),
         btnBorderColor: $r('app.color.CECECE'),
-        btnName: '完成',
+        btnName: resStr(this.context, 'order_end_btn_done'),
         onEvent: (data: string) => {
           router.pushUrl({
             url: 'pages/Index'

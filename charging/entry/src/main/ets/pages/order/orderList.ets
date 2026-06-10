@@ -4,6 +4,7 @@ import { Tmp } from '../../model/class';
 import { OrderListItem, OrderListReturning, OrderListVO } from '../../model/interface/api/OrderApiInterface';
 import { ListColumn } from '../../utils/ListColumn';
 import { OrderItemCard } from './components/orderItemCard';
+import { resStr } from '../../utils/i18n';
 
 @Entry
 @Component
@@ -19,6 +20,7 @@ export struct OrderList {
   @State currentPage: number = 1
   @State pageSize: number = 5
   @State orderStatus: number | null = null
+  private context: Context = getContext(this)
 
   // 获取订单列表 性能让优化 反例设置每页加载1000条 正例按需加载
   async getOrderList() {
@@ -59,7 +61,7 @@ export struct OrderList {
           .margin({ top: '40lpx' })
       }.justifyContent(FlexAlign.Center)
 
-      Text('暂无订单')
+      Text(resStr(this.context, 'order_list_empty'))
         .fontSize('14lpx')
         .margin({ bottom: '8lpx' })
         .fontColor($r('app.color.999999'))
@@ -126,7 +128,7 @@ export struct OrderList {
   build() {
     Column() {
       HeadComponent({
-        headName: '订单详情',
+        headName: resStr(this.context, 'order_list_head_name'),
         isHaveBtn: false,
         backUrl: 'pages/Index',
         tabs: 1,
@@ -144,7 +146,7 @@ export struct OrderList {
           } else {
             this.OrderList()
           }
-        }.tabBar(this.tabBuilder(0, '全部订单'))
+        }.tabBar(this.tabBuilder(0, resStr(this.context, 'order_list_tab_all')))
 
         TabContent() {
           if (this.orderList.length === 0) {
@@ -152,7 +154,7 @@ export struct OrderList {
           } else {
             this.OrderList()
           }
-        }.tabBar(this.tabBuilder(1, '待支付'))
+        }.tabBar(this.tabBuilder(1, resStr(this.context, 'order_list_tab_pending')))
 
         TabContent() {
           if (this.orderList.length === 0) {
@@ -160,7 +162,7 @@ export struct OrderList {
           } else {
             this.OrderList()
           }
-        }.tabBar(this.tabBuilder(2, '已完成'))
+        }.tabBar(this.tabBuilder(2, resStr(this.context, 'order_list_tab_completed')))
       }
       .vertical(false)
       .barMode(BarMode.Fixed)

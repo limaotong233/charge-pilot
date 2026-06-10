@@ -4,6 +4,7 @@ import { AnalyticsOverview, MonthlyTrendItem, TopStationItem } from '../../model
 import { router } from '@kit.ArkUI'
 import { useToastHook } from '../../service'
 import { ResultVO } from '../../utils/Http'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
@@ -19,6 +20,7 @@ struct Analytics {
     monthlyTrend: []
   }
   @State loading: boolean = true
+  private context: Context = getContext(this)
 
   aboutToAppear() {
     this.loadData()
@@ -32,7 +34,7 @@ struct Analytics {
         this.data = res
       }
     } catch (e) {
-      useToastHook('加载统计数据失败', '40lpx')
+      useToastHook(resStr(this.context, 'analytics_toast_load_fail'), '40lpx')
     } finally {
       this.loading = false
     }
@@ -59,7 +61,7 @@ struct Analytics {
     Column() {
       // 顶部导航栏
       HeadComponent({
-        headName: '充电统计',
+        headName: resStr(this.context, 'analytics_head_name'),
         backUrl: 'pages/Index',
         tabs: 1
       })
@@ -70,7 +72,7 @@ struct Analytics {
             .width('40lpx')
             .height('40lpx')
             .margin({ top: '120lpx' })
-          Text('加载中...')
+          Text(resStr(this.context, 'common_loading'))
             .fontSize('14lpx')
             .fontColor($r('app.color.999999'))
             .margin({ top: '12lpx' })
@@ -83,16 +85,16 @@ struct Analytics {
             // ============ 顶部数据卡片 ============
             Grid() {
               GridItem() {
-                this.StatCard('总充电量', `${this.formatNum(this.data.totalCapacity)} kWh`, '#4CAF50')
+                this.StatCard(resStr(this.context, 'analytics_card_total_capacity'), `${this.formatNum(this.data.totalCapacity)} kWh`, '#4CAF50')
               }
               GridItem() {
-                this.StatCard('总消费', `¥${this.formatNum(this.data.totalAmount)}`, '#FF9800')
+                this.StatCard(resStr(this.context, 'analytics_card_total_amount'), `¥${this.formatNum(this.data.totalAmount)}`, '#FF9800')
               }
               GridItem() {
-                this.StatCard('充电次数', `${this.data.totalOrders} 次`, '#2196F3')
+                this.StatCard(resStr(this.context, 'analytics_card_total_orders'), `${this.data.totalOrders} ${resStr(this.context, 'analytics_unit_times')}`, '#2196F3')
               }
               GridItem() {
-                this.StatCard('碳减排', `${this.formatNum(this.data.co2Reduction)} kg`, '#9C27B0')
+                this.StatCard(resStr(this.context, 'analytics_card_co2_reduction'), `${this.formatNum(this.data.co2Reduction)} ${resStr(this.context, 'analytics_unit_kg')}`, '#9C27B0')
               }
             }
             .columnsTemplate('1fr 1fr')
@@ -104,9 +106,9 @@ struct Analytics {
 
             // ============ 平均数据 ============
             Row() {
-              this.AvgItem('平均充电量', `${this.formatNum(this.data.avgCapacity)} kWh`)
+              this.AvgItem(resStr(this.context, 'analytics_label_avg_capacity'), `${this.formatNum(this.data.avgCapacity)} kWh`)
               Divider().vertical(true).height('32lpx').color($r('app.color.EEEEEE')).margin({ left: '16lpx', right: '16lpx' })
-              this.AvgItem('平均费用', `¥${this.formatNum(this.data.avgAmount)}`)
+              this.AvgItem(resStr(this.context, 'analytics_label_avg_amount'), `¥${this.formatNum(this.data.avgAmount)}`)
             }
             .width('100%')
             .justifyContent(FlexAlign.Center)
@@ -117,13 +119,13 @@ struct Analytics {
 
             // ============ 近6个月充电趋势（柱状图） ============
             Column() {
-              Text('近6个月充电趋势')
+              Text(resStr(this.context, 'analytics_section_trend'))
                 .fontSize('16lpx')
                 .fontWeight(FontWeight.Bold)
                 .margin({ bottom: '12lpx' })
 
               if (this.data.monthlyTrend.length === 0) {
-                Text('暂无充电记录')
+                Text(resStr(this.context, 'analytics_empty_no_records'))
                   .fontSize('14lpx')
                   .fontColor($r('app.color.999999'))
                   .margin({ top: '24lpx', bottom: '24lpx' })
@@ -164,12 +166,12 @@ struct Analytics {
                 Row() {
                   Row() {
                     Rect().width('8lpx').height('8lpx').fill('#4CAF50')
-                    Text('充电量(kWh)').fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
+                    Text(resStr(this.context, 'analytics_legend_capacity')).fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
                   }
 
                   Row() {
                     Rect().width('8lpx').height('8lpx').fill('#FF9800')
-                    Text('消费(元)').fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
+                    Text(resStr(this.context, 'analytics_legend_expense')).fontSize('10lpx').fontColor($r('app.color.999999')).margin({ left: '4lpx' })
                   }
                   .margin({ left: '24lpx' })
                 }
@@ -185,13 +187,13 @@ struct Analytics {
 
             // ============ 常去充电站 TOP5 ============
             Column() {
-              Text('常去充电站')
+              Text(resStr(this.context, 'analytics_section_top_stations'))
                 .fontSize('16lpx')
                 .fontWeight(FontWeight.Bold)
                 .margin({ bottom: '12lpx' })
 
               if (this.data.topStations.length === 0) {
-                Text('暂无充电记录')
+                Text(resStr(this.context, 'analytics_empty_no_records'))
                   .fontSize('14lpx')
                   .fontColor($r('app.color.999999'))
                   .margin({ top: '12lpx', bottom: '12lpx' })
@@ -213,7 +215,7 @@ struct Analytics {
                       .textOverflow({ overflow: TextOverflow.Ellipsis })
 
                     // 次数
-                    Text(`${item.count}次`)
+                    Text(`${item.count}${resStr(this.context, 'analytics_unit_times')}`)
                       .fontSize('13lpx')
                       .fontColor($r('app.color.999999'))
                   }

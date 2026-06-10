@@ -104,6 +104,8 @@
     {"name": "charging_notification_title", "value": "充电提示"},
     {"name": "charging_notification_text", "value": "充电完成，当前充电量100%"},
     {"name": "charging_notification_extra", "value": "提醒"},
+    {"name": "charging_tts_speech", "value": "鸿蒙智能充电温馨提醒您，车辆当前电量"},
+    {"name": "charging_loading_dialog_suffix", "value": "中..."},
 
     {"name": "order_info_head_name", "value": "订单详情"},
     {"name": "order_info_status_in_progress", "value": "进行中"},
@@ -123,6 +125,13 @@
     {"name": "order_info_toast_load_fail", "value": "加载订单详情失败"},
     {"name": "order_info_toast_pay_fail", "value": "支付失败"},
     {"name": "order_info_toast_copied", "value": "已复制到剪切板"},
+    {"name": "order_info_label_port_code", "value": "充电桩编码："},
+    {"name": "order_info_label_order_no", "value": "订单编号："},
+    {"name": "order_info_unit_hour", "value": "小时"},
+    {"name": "order_info_unit_minute", "value": "分钟"},
+    {"name": "order_info_unit_second", "value": "秒"},
+    {"name": "order_info_unit_month", "value": "月"},
+    {"name": "order_info_unit_day", "value": "日"},
 
     {"name": "order_end_title", "value": "支付成功"},
     {"name": "order_end_label_total", "value": "总金额"},
@@ -169,6 +178,8 @@
     {"name": "analytics_legend_expense", "value": "消费(元)"},
     {"name": "analytics_section_top_stations", "value": "常去充电站"},
     {"name": "analytics_toast_load_fail", "value": "加载统计数据失败"},
+    {"name": "analytics_unit_times", "value": "次"},
+    {"name": "analytics_unit_kg", "value": "kg"},
 
     {"name": "card_coupons_head_name", "value": "我的卡券"},
     {"name": "card_coupons_label_voucher_name", "value": "充电缴费代金券"},

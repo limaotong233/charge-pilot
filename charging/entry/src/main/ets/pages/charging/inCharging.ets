@@ -18,6 +18,7 @@ import { getOrderAmount, getOrderCreate, getOrderDetail, getOrderSpeedUp } from 
 import { notificationManager } from '@kit.NotificationKit'
 import { useToastHook } from '../../service'
 import { ResultVO } from '../../utils/Http'
+import { resStr } from '../../utils/i18n'
 
 const TAG = 'huaweiBackgorund'
 
@@ -29,7 +30,7 @@ export struct InCharging {
     { color: $r('app.color.progressColor2'), offset: 1 }
   ])
   @State format: string = 'HH:mm:ss'
-  @State chargingBtnName: string = '启动充电'
+  @State chargingBtnName: string = ''
   @State @Watch('onChangeBtnStatus') chargingTime: number = 0
   @State chargingStatus: number = 0
   @State loading: boolean = false
@@ -37,7 +38,7 @@ export struct InCharging {
   @State closeDialog: boolean = false
   @State @Watch('onChangeAudio') isSetAudio: boolean = LocalPreferences.get('IsSetAudio') as boolean || false
   @State isShowAudioDialog: boolean = false
-  @State areaValue: string = '15秒'
+  @State areaValue: string = ''
   @State areaIndex: number = 15
   @State areaArrowPosition: ArrowPosition = ArrowPosition.END
   @State isShowChargingToast: boolean = false
@@ -105,9 +106,11 @@ export struct InCharging {
       this.updateEstimate()
       if (res.orderStatus === 0) {
         this.formatTime(res.chargeTime)
-        this.chargingBtnName = '结束充电'
+        this.chargingBtnName = resStr(this.context, 'charging_btn_end')
+        this.chargingStatus = 0
       } else if (res.orderStatus === 1) {
-        this.chargingBtnName = '订单待支付'
+        this.chargingBtnName = resStr(this.context, 'charging_btn_pending_payment')
+        this.chargingStatus = 1
       }
     } else {
       clearInterval(this.timeDetailClock)
@@ -121,9 +124,9 @@ export struct InCharging {
     try {
       await getOrderSpeedUp<string>({ orderId })
       this.speedUpActive = true
-      useToastHook('加速模拟已开启，约1分钟充满', '32lpx')
+      useToastHook(resStr(this.context, 'charging_speedup_on'), '32lpx')
     } catch (e) {
-      useToastHook('加速失败', '40lpx')
+      useToastHook(resStr(this.context, 'charging_speedup_fail'), '40lpx')
     }
   }
 
@@ -190,7 +193,7 @@ export struct InCharging {
                     let time = new Date()
                     this.requestId = (Math.random() * 10000).toFixed(0) + time.getTime() + ''
                     this.isShowChargingToast = true
-                    this.AISpeech(`鸿蒙智能充电温馨提醒您，车辆当前电量${this.chargingTime.toFixed(0)}%`, this.requestId)
+                    this.AISpeech(`${resStr(this.context, 'charging_tts_speech')}${this.chargingTime.toFixed(0)}%`, this.requestId)
                   }
                   this.AISpeechTime++
                 }, 1000)
@@ -214,14 +217,15 @@ export struct InCharging {
   }
 
   dialogControllerProgress: CustomDialogController = new CustomDialogController({
-    builder: LoadingDialog({ content: `${this.chargingBtnName}中…` }),
+    builder: LoadingDialog({ content: `${this.chargingBtnName}${resStr(this.context, 'charging_loading_dialog_suffix')}` }),
     autoCancel: true,
     backgroundBlurStyle: BlurStyle.COMPONENT_ULTRA_THICK
   })
 
   onChangeBtnStatus() {
     if (this.chargingTime >= 100) {
-      this.chargingBtnName = '结束充电'
+      this.chargingBtnName = resStr(this.context, 'charging_btn_end')
+      this.chargingStatus = 0
       this.getOrderAmount()
       let context = this.getUIContext().getHostContext() as common.UIAbilityContext
       notificationManager.requestEnableNotification(context).then(() => {
@@ -231,9 +235,9 @@ export struct InCharging {
           content: {
             notificationContentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
             normal: {
-              title: '鸿蒙智能充电提示',
-              text: '鸿蒙智能充电提醒，当前充电量100%',
-              additionalText: '提醒'
+              title: resStr(this.context, 'charging_notification_title'),
+              text: resStr(this.context, 'charging_notification_text'),
+              additionalText: resStr(this.context, 'charging_notification_extra')
             }
           }
         }
@@ -277,6 +281,8 @@ export struct InCharging {
 
   aboutToAppear() {
     router.clear()
+    this.chargingBtnName = resStr(this.context, 'charging_btn_start')
+    this.areaValue = resStr(this.context, 'charging_area_15s')
   }
 
   aboutToDisappear(): void {
@@ -330,7 +336,7 @@ export struct InCharging {
       btnColor: $r('app.color.longBtn_blue'),
       btnFontColor: $r('app.color.background_color_over'),
       btnBorderColor: $r('app.color.longBtn_blue'),
-      btnName: '保存设置',
+      btnName: resStr(this.context, 'btn_save_settings'),
       onEvent: () => {
         this.startContinuousTask()
         this.isShowAudioDialog = false
@@ -342,17 +348,17 @@ export struct InCharging {
   mainContent(): void {
     Column() {
       Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-        Text('播报内容').width('120lpx')
-        Text('充电量').width('120lpx').textAlign(TextAlign.End)
+        Text($r('app.string.charging_label_broadcast')).width('120lpx')
+        Text($r('app.string.charging_label_soc')).width('120lpx').textAlign(TextAlign.End)
       }
       .padding('16lpx')
       .backgroundColor($r('app.color.background_color_over'))
       .borderRadius('8lpx')
 
       Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-        Text('间隔时间').width('120lpx')
+        Text($r('app.string.charging_label_interval')).width('120lpx')
         Column() {
-          Select([{ value: '15秒' }, { value: '30秒' }, { value: '1分钟' }])
+          Select([{ value: resStr(this.context, 'charging_area_15s') }, { value: resStr(this.context, 'charging_area_30s') }, { value: resStr(this.context, 'charging_area_1min') }])
             .selected(this.areaIndex)
             .value(this.areaValue)
             .space(0)
@@ -384,7 +390,7 @@ export struct InCharging {
       Column() {
         // 顶部导航栏
         HeadComponent({
-          headName: '充电中',
+          headName: resStr(this.context, 'charging_head_name'),
           isHaveBtn: true,
           backUrl: 'pages/order/orderList',
           tabs: 0,
@@ -403,12 +409,12 @@ export struct InCharging {
               } else {
                 promptAction.showDialog({
                   title: '',
-                  message: '授权访问手机语音功能，是否开启',
+                  message: resStr(this.context, 'charging_dialog_voice_auth'),
                   isModal: true,
                   shadow: ShadowStyle.OUTER_FLOATING_SM,
                   buttons: [
-                    { text: '取消', color: $r('app.color.longBtn_blue') },
-                    { text: '确定', color: $r('app.color.longBtn_blue') }
+                    { text: resStr(this.context, 'common_cancel'), color: $r('app.color.longBtn_blue') },
+                    { text: resStr(this.context, 'common_confirm'), color: $r('app.color.longBtn_blue') }
                   ]
                 }).then((data) => {
                   if (data.index === 1) {
@@ -485,21 +491,21 @@ export struct InCharging {
 
             // 预计剩余时间
             if (this.estimatedMinutes > 0 && this.chargingTime < 100) {
-              Text(`预计还需 ${this.estimatedMinutes} 分钟`)
+              Text(resStr(this.context, 'charging_estimate_remaining').replace('%d', `${this.estimatedMinutes}`))
                 .fontSize('13lpx')
                 .fontColor('#999999')
                 .margin({ bottom: '16lpx' })
             }
 
             // 实时数据卡片（3列）
-            if (this.orderDetail && this.chargingBtnName === '结束充电') {
+            if (this.orderDetail && this.chargingStatus === 0) {
               Row() {
                 Column() {
                   Text(`${this.orderDetail.chargePower}`)
                     .fontSize('18lpx')
                     .fontWeight(FontWeight.Bold)
                     .fontColor('#2196F3')
-                  Text('功率(kW)')
+                  Text($r('app.string.charging_label_power'))
                     .fontSize('11lpx')
                     .fontColor('#999999')
                 }
@@ -513,7 +519,7 @@ export struct InCharging {
                     .fontSize('18lpx')
                     .fontWeight(FontWeight.Bold)
                     .fontColor('#4CAF50')
-                  Text('已充(kWh)')
+                  Text($r('app.string.charging_label_charged'))
                     .fontSize('11lpx')
                     .fontColor('#999999')
                 }
@@ -527,7 +533,7 @@ export struct InCharging {
                     .fontSize('18lpx')
                     .fontWeight(FontWeight.Bold)
                     .fontColor('#FF9800')
-                  Text('单价(元/度)')
+                  Text($r('app.string.charging_label_unit_price'))
                     .fontSize('11lpx')
                     .fontColor('#999999')
                 }
@@ -550,24 +556,24 @@ export struct InCharging {
                 btnBorderColor: $r('app.color.longBtn_blue'),
                 btnName: this.chargingBtnName,
                 onEvent: () => {
-                  if (this.chargingBtnName === '充电已完成') return
-                  if (this.chargingBtnName === '订单待支付') {
+                  if (this.chargingStatus === 2) return
+                  if (this.chargingStatus === 1) {
                     router.pushUrl({
                       url: 'pages/order/orderInfo',
                       params: { orderId: this.orderDetail?.orderId }
                     })
                     return
                   }
-                  if (this.chargingBtnName === '结束充电') {
+                  if (this.chargingStatus === 0) {
                     this.getOrderAmount()
                   }
                 }
               })
 
               // 加速模拟按钮
-              if (this.chargingBtnName === '结束充电' && !this.speedUpActive) {
+              if (this.chargingStatus === 0 && !this.speedUpActive) {
                 Row() {
-                  Text('加速模拟')
+                  Text(resStr(this.context, 'charging_btn_speedup'))
                     .fontSize('14lpx')
                     .fontColor('#FF9800')
                     .fontWeight(FontWeight.Medium)
@@ -584,7 +590,7 @@ export struct InCharging {
 
               // 加速中提示
               if (this.speedUpActive && this.chargingTime < 100) {
-                Text('加速充电中...')
+                Text(resStr(this.context, 'charging_speedup_active'))
                   .fontSize('13lpx')
                   .fontColor('#FF9800')
                   .margin({ top: '8lpx' })
@@ -600,9 +606,9 @@ export struct InCharging {
                     Text(`${this.orderDetail?.chargeCapacity.toFixed(2)}`)
                       .fontSize('16lpx')
                       .fontColor($r('app.color.progressColor2'))
-                    Text('度').fontSize('10lpx').fontColor($r('app.color.progressColor2'))
+                    Text($r('app.string.common_unit_deg')).fontSize('10lpx').fontColor($r('app.color.progressColor2'))
                   }
-                  Text('充电度数').fontSize('12lpx').fontColor($r('app.color.charging_font_color')).margin({ top: '4lpx' })
+                  Text($r('app.string.charging_label_charge_kwh')).fontSize('12lpx').fontColor($r('app.color.charging_font_color')).margin({ top: '4lpx' })
                 }
                 .width('100%')
 
@@ -613,9 +619,9 @@ export struct InCharging {
                     Text(`${this.orderDetail?.orderAmount.toFixed(2)}`)
                       .fontSize('16lpx')
                       .fontColor($r('app.color.chargingPrice_color'))
-                    Text('元').fontSize('10lpx').fontColor($r('app.color.chargingPrice_color'))
+                    Text($r('app.string.common_unit_yuan')).fontSize('10lpx').fontColor($r('app.color.chargingPrice_color'))
                   }
-                  Text('充电金额').fontSize('12lpx').fontColor($r('app.color.charging_font_color')).margin({ top: '4lpx' })
+                  Text($r('app.string.charging_label_charge_amount')).fontSize('12lpx').fontColor($r('app.color.charging_font_color')).margin({ top: '4lpx' })
                 }
                 .width('100%')
               }
@@ -638,7 +644,7 @@ export struct InCharging {
           LoadingProgress()
             .width('48lpx')
             .height('48lpx')
-          Text('准备充电...')
+          Text(resStr(this.context, 'charging_loading_prepare'))
             .fontSize('14lpx')
             .fontColor('#999999')
             .margin({ top: '12lpx' })
@@ -663,7 +669,7 @@ export struct InCharging {
       // 顶部充电进度提示
       if (this.isShowChargingToast) {
         Row() {
-          Text(`鸿蒙智能充电温馨提醒您，车辆当前电量${this.chargingTime.toFixed(0)}%`)
+          Text(`${resStr(this.context, 'charging_tts_speech')}${this.chargingTime.toFixed(0)}%`)
             .fontSize('14lpx')
             .margin({ top: '19lpx', bottom: '17lpx', left: '24lpx', right: '24lpx' })
             .textAlign(TextAlign.Start)
@@ -680,7 +686,7 @@ export struct InCharging {
       if (this.isShowAudioDialog) {
         BottomDialog({
           bdBackgroundColor: $r('app.color.F3F3F3'),
-          bdName: '语音播报设置',
+          bdName: resStr(this.context, 'charging_dialog_voice_title'),
           isHaveLongBtn: true,
           MainContent: (): void => { this.mainContent() },
           longBtn: (): void => { this.longBtn() },

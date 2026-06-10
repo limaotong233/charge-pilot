@@ -6,6 +6,7 @@ import { getOrderDetail, getOrderPay } from '../../api/OrderApi'
 import { pasteboard } from '@kit.BasicServicesKit'
 import { useToastHook } from '../../service'
 import { ResultVO } from '../../utils/Http'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
@@ -22,6 +23,7 @@ export struct OrderInfo {
   @State socEndValue: number = 0
   @State timeDifferent: string = ''
   @State pageLoading: boolean = true
+  private context: Context = getContext(this)
 
   // 安全格式化金额
   private formatAmount(val: number): string {
@@ -43,15 +45,15 @@ export struct OrderInfo {
         let time = Number(((endTime - startTime) / 1000).toFixed(0))
         if (isNaN(time) || time < 0) time = 0
         if (time > 3600) {
-          this.timeDifferent = `${(time / 3600).toFixed(0)}小时`
+          this.timeDifferent = `${(time / 3600).toFixed(0)}${resStr(this.context, 'order_info_unit_hour')}`
         } else if (time > 60) {
-          this.timeDifferent = `${(time / 60).toFixed(0)}分钟`
+          this.timeDifferent = `${(time / 60).toFixed(0)}${resStr(this.context, 'order_info_unit_minute')}`
         } else {
-          this.timeDifferent = `${time}秒`
+          this.timeDifferent = `${time}${resStr(this.context, 'order_info_unit_second')}`
         }
       }
     } catch (e) {
-      useToastHook('加载订单详情失败', '40lpx')
+      useToastHook(resStr(this.context, 'order_info_toast_load_fail'), '40lpx')
     } finally {
       this.pageLoading = false
     }
@@ -69,7 +71,7 @@ export struct OrderInfo {
         }
       })
     }).catch((err: ResultVO<string>) => {
-      useToastHook(err.msg || '支付失败', '40lpx')
+      useToastHook(err.msg || resStr(this.context, 'order_info_toast_pay_fail'), '40lpx')
     })
   }
 
@@ -78,7 +80,7 @@ export struct OrderInfo {
     let pasteData = pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, text)
     let systemPasteboard = pasteboard.getSystemPasteboard()
     await systemPasteboard.setData(pasteData)
-    useToastHook('已复制到剪切板', '40lpx')
+    useToastHook(resStr(this.context, 'order_info_toast_copied'), '40lpx')
   }
 
   aboutToAppear(): void {
@@ -90,7 +92,7 @@ export struct OrderInfo {
     Stack({ alignContent: Alignment.BottomStart }) {
       Column() {
         HeadComponent({
-          headName: '订单详情',
+          headName: resStr(this.context, 'order_info_head_name'),
           isHaveBtn: false,
           backUrl: 'pages/order/orderList',
           receive: () => {}
@@ -99,7 +101,7 @@ export struct OrderInfo {
         if (this.pageLoading) {
           Column() {
             LoadingProgress().width('40lpx').height('40lpx')
-            Text('加载中...').fontSize('14lpx').fontColor('#999999').margin({ top: '12lpx' })
+            Text(resStr(this.context, 'common_loading')).fontSize('14lpx').fontColor('#999999').margin({ top: '12lpx' })
           }
           .width('100%')
           .layoutWeight(1)
@@ -112,12 +114,12 @@ export struct OrderInfo {
               .height('36lpx')
               .margin({ right: '16lpx' })
             Column() {
-              Text(this.orderDetail?.orderStatus === 0 ? '进行中' :
-                this.orderDetail?.orderStatus === 1 ? '待支付' :
-                  this.orderDetail?.orderStatus === 2 ? '已完成' : '')
+              Text(this.orderDetail?.orderStatus === 0 ? resStr(this.context, 'order_info_status_in_progress') :
+                this.orderDetail?.orderStatus === 1 ? resStr(this.context, 'order_info_status_pending') :
+                  this.orderDetail?.orderStatus === 2 ? resStr(this.context, 'order_info_status_completed') : '')
                 .fontSize('16lpx').width('100%')
               Row() {
-                Text(`订单编号：${this.orderDetail?.orderNo || '-'}`)
+                Text(`${resStr(this.context, 'order_info_label_order_no')}${this.orderDetail?.orderNo || '-'}`)
                   .fontSize('12lpx')
                   .margin({ right: '8lpx' })
                 Image($r('app.media.order_copyIcon'))
@@ -136,7 +138,7 @@ export struct OrderInfo {
 
           Column() {
             Row() {
-              Text('充电信息')
+              Text(resStr(this.context, 'order_info_label_charging_info'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('16lpx')
             }
@@ -156,7 +158,7 @@ export struct OrderInfo {
               .fontSize('14lpx')
               .width('100%')
               .padding({ bottom: '8lpx', left: '16lpx', right: '16lpx' })
-            Text(`充电桩编码：${this.orderDetail?.portName || '-'}`)
+            Text(`${resStr(this.context, 'order_info_label_port_code')}${this.orderDetail?.portName || '-'}`)
               .fontColor($r('app.color.historyList_font_color'))
               .fontSize('12lpx')
               .width('100%')
@@ -165,7 +167,8 @@ export struct OrderInfo {
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
               Column() {
                 Text(this.orderDetail?.startTime ?
-                  `${this.orderDetail?.startTime.split(' ')[0].split('-')[1]}月${this.orderDetail?.startTime.split(' ')[0].split('-')[2]}日` : '-月-日')
+                  `${this.orderDetail?.startTime.split(' ')[0].split('-')[1]}${resStr(this.context, 'order_info_unit_month')}${this.orderDetail?.startTime.split(' ')[0].split('-')[2]}${resStr(this.context, 'order_info_unit_day')}` :
+                  `-${resStr(this.context, 'order_info_unit_month')}-${resStr(this.context, 'order_info_unit_day')}`)
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('12lpx')
                   .width('100%')
@@ -193,7 +196,7 @@ export struct OrderInfo {
                   .width('142lpx')
                   .height('8lpx')
                   .margin({ top: '8lpx', bottom: '8lpx' })
-                Text('充电时长')
+                Text(resStr(this.context, 'order_info_label_duration'))
                   .fontColor($r('app.color.charging_font_color'))
                   .fontSize('12lpx')
                   .width('100%')
@@ -203,7 +206,8 @@ export struct OrderInfo {
 
               Column() {
                 Text(this.orderDetail?.endTime ?
-                  `${this.orderDetail?.endTime.split(' ')[0].split('-')[1]}月${this.orderDetail?.endTime.split(' ')[0].split('-')[2]}日` : '-月-日')
+                  `${this.orderDetail?.endTime.split(' ')[0].split('-')[1]}${resStr(this.context, 'order_info_unit_month')}${this.orderDetail?.endTime.split(' ')[0].split('-')[2]}${resStr(this.context, 'order_info_unit_day')}` :
+                  `-${resStr(this.context, 'order_info_unit_month')}-${resStr(this.context, 'order_info_unit_day')}`)
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('12lpx')
                   .width('100%')
@@ -225,14 +229,14 @@ export struct OrderInfo {
             }
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('合计充电电量：')
+              Text(resStr(this.context, 'order_info_label_total_kwh'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('12lpx')
               Row() {
                 Text(this.formatAmount(this.orderDetail?.chargeCapacity))
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('20lpx')
-                Text('KWh')
+                Text($r('app.string.common_unit_kwh'))
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('12lpx')
                   .alignSelf(ItemAlign.Baseline)
@@ -249,7 +253,7 @@ export struct OrderInfo {
 
           Column() {
             Row() {
-              Text('费用信息')
+              Text(resStr(this.context, 'order_info_label_fee_info'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('16lpx')
             }
@@ -259,14 +263,14 @@ export struct OrderInfo {
             .width('100%')
 
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('电费：')
+              Text(resStr(this.context, 'order_info_label_electricity_fee'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('12lpx')
               Row() {
                 Text(this.formatAmount(this.orderDetail?.orderAmount))
                   .fontColor($r('app.color.chargingPrice_color'))
                   .fontSize('20lpx')
-                Text('元')
+                Text($r('app.string.common_unit_yuan'))
                   .fontColor($r('app.color.historyList_font_color'))
                   .fontSize('12lpx')
                   .alignSelf(ItemAlign.Baseline)
@@ -289,7 +293,7 @@ export struct OrderInfo {
           btnColor: $r('app.color.longBtn_blue'),
           btnFontColor: $r('app.color.background_color_over'),
           btnBorderColor: $r('app.color.longBtn_blue'),
-          btnName: '立即支付',
+          btnName: resStr(this.context, 'order_info_btn_pay_now'),
           onEvent: (data: string) => {
             this.isShowMarkLayer = true
           }
@@ -313,7 +317,7 @@ export struct OrderInfo {
           Column() {
             // 标题栏
             Row() {
-              Text('在线支付')
+              Text(resStr(this.context, 'order_info_sheet_title'))
                 .fontSize('20lpx')
                 .fontWeight(FontWeight.Bold)
               Blank()
@@ -341,7 +345,7 @@ export struct OrderInfo {
 
             // 充电站名称
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('充电站名称')
+              Text(resStr(this.context, 'order_info_sheet_station_name'))
                 .fontColor($r('app.color.charging_font_color'))
                 .fontSize('14lpx')
               Text(this.orderDetail?.stationName || '-')
@@ -356,10 +360,10 @@ export struct OrderInfo {
 
             // 付款方式
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text('付款方式')
+              Text(resStr(this.context, 'order_info_sheet_payment_method'))
                 .fontColor($r('app.color.charging_font_color'))
                 .fontSize('14lpx')
-              Text('代金券')
+              Text(resStr(this.context, 'order_info_sheet_voucher'))
                 .fontColor($r('app.color.historyList_font_color'))
                 .fontSize('14lpx')
             }
@@ -371,7 +375,7 @@ export struct OrderInfo {
               btnColor: $r('app.color.longBtn_red'),
               btnFontColor: $r('app.color.background_color_over'),
               btnBorderColor: $r('app.color.longBtn_red'),
-              btnName: '确认支付',
+              btnName: resStr(this.context, 'order_info_btn_confirm_pay'),
               onEvent: () => {
                 this.getOrderPay()
               }
