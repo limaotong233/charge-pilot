@@ -8,6 +8,7 @@ import { login, getUserInfo } from '../../api/LoginApi'
 import { LocalPreferences } from '../../service/LocalPreferences'
 import { ResultVO } from '../../utils/Http'
 import { userInfoReturning } from '../../model/interface/api/LoginApiInterface'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
@@ -30,9 +31,9 @@ struct Register {
 
   private validateAccount(value: string) {
     if (!value) {
-      this.errors.account = '账号不能为空'
+      this.errors.account = resStr(getContext(this), 'register_error_account_empty')
     } else if (value.length < 3 || value.length > 20) {
-      this.errors.account = '账号长度需在3-20个字符之间'
+      this.errors.account = resStr(getContext(this), 'register_error_account_length')
     } else {
       this.errors.account = undefined
     }
@@ -40,7 +41,7 @@ struct Register {
 
   private validateUserName(value: string) {
     if (!value) {
-      this.errors.userName = '用户名不能为空'
+      this.errors.userName = resStr(getContext(this), 'register_error_nickname_empty')
     } else {
       this.errors.userName = undefined
     }
@@ -48,9 +49,9 @@ struct Register {
 
   private validatePassword(value: string) {
     if (!value) {
-      this.errors.password = '密码不能为空'
+      this.errors.password = resStr(getContext(this), 'register_error_password_empty')
     } else if (value.length < 6) {
-      this.errors.password = '密码长度不能少于6位'
+      this.errors.password = resStr(getContext(this), 'register_error_password_length')
     } else {
       this.errors.password = undefined
     }
@@ -58,9 +59,9 @@ struct Register {
 
   private validateConfirmPassword(value: string) {
     if (!value) {
-      this.errors.confirmPassword = '请确认密码'
+      this.errors.confirmPassword = resStr(getContext(this), 'register_error_confirm_empty')
     } else if (value !== this.form.password) {
-      this.errors.confirmPassword = '两次密码不一致'
+      this.errors.confirmPassword = resStr(getContext(this), 'register_error_confirm_mismatch')
     } else {
       this.errors.confirmPassword = undefined
     }
@@ -91,12 +92,12 @@ struct Register {
         LocalPreferences.put('accountImage', resUserInfo.avatar ? resUserInfo.avatar.fileAccessUrl : '')
         LocalPreferences.flush()
 
-        useToastHook('注册成功', '32lpx')
+        useToastHook(resStr(getContext(this), 'register_success'), '32lpx')
         router.pushUrl({ url: 'pages/Index' })
       }
     }).catch((err: ResultVO<string>) => {
       // 用户信息获取失败，跳转登录页
-      useToastHook('注册成功，请登录', '32lpx')
+      useToastHook(resStr(getContext(this), 'register_success_login'), '32lpx')
       router.pushUrl({ url: 'pages/login/index' })
     })
   }
@@ -114,7 +115,7 @@ struct Register {
             .height('68lpx')
             .margin({ top: '44lpx', bottom: '40lpx' })
 
-          Text('注册新账号')
+          Text($r('app.string.register_title'))
             .fontSize('20lpx')
             .fontWeight(FontWeight.Bold)
             .margin({ bottom: '24lpx' })
@@ -122,11 +123,11 @@ struct Register {
           Column() {
             // 账号
             Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Text('账号')
+              Text($r('app.string.login_label_account'))
                 .width('56lpx')
               TextInput({
                 text: this.form.account,
-                placeholder: this.errors.account ? this.errors.account : '请输入账号（3-20个字符）'
+                placeholder: this.errors.account ? this.errors.account : $r('app.string.register_placeholder_account')
               })
                 .height('40lpx')
                 .placeholderFont({ size: '14lpx' })
@@ -143,11 +144,11 @@ struct Register {
 
             // 用户名
             Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Text('昵称')
+              Text($r('app.string.register_label_nickname'))
                 .width('56lpx')
               TextInput({
                 text: this.form.userName,
-                placeholder: this.errors.userName ? this.errors.userName : '请输入昵称'
+                placeholder: this.errors.userName ? this.errors.userName : $r('app.string.register_placeholder_nickname')
               })
                 .height('40lpx')
                 .placeholderFont({ size: '14lpx' })
@@ -164,11 +165,11 @@ struct Register {
 
             // 密码
             Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Text('密码')
+              Text($r('app.string.login_label_password'))
                 .width('56lpx')
               TextInput({
                 text: this.form.password,
-                placeholder: this.errors.password ? this.errors.password : '请输入密码（至少6位）'
+                placeholder: this.errors.password ? this.errors.password : $r('app.string.register_placeholder_password')
               })
                 .height('40lpx')
                 .placeholderFont({ size: '14lpx' })
@@ -186,11 +187,11 @@ struct Register {
 
             // 确认密码
             Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Text('确认')
+              Text($r('app.string.register_label_confirm'))
                 .width('56lpx')
               TextInput({
                 text: this.form.confirmPassword,
-                placeholder: this.errors.confirmPassword ? this.errors.confirmPassword : '请再次输入密码'
+                placeholder: this.errors.confirmPassword ? this.errors.confirmPassword : $r('app.string.register_placeholder_confirm')
               })
                 .height('40lpx')
                 .placeholderFont({ size: '14lpx' })
@@ -213,7 +214,7 @@ struct Register {
             btnColor: $r('app.color.longBtn_blue'),
             btnFontColor: $r('app.color.background_color_over'),
             btnBorderColor: $r('app.color.longBtn_blue'),
-            btnName: '注册账号',
+            btnName: resStr(getContext(this), 'register_btn_submit'),
             onEvent: (data: string) => {
               if (this.validateForm()) {
                 this.registerApp()
@@ -223,10 +224,10 @@ struct Register {
 
           // 已有账号，去登录
           Row() {
-            Text('已有账号？')
+            Text($r('app.string.register_has_account'))
               .fontSize('14lpx')
               .fontColor($r('app.color.999999'))
-            Text('去登录')
+            Text($r('app.string.register_go_login'))
               .fontSize('14lpx')
               .fontColor('#2196F3')
               .margin({ left: '4lpx' })

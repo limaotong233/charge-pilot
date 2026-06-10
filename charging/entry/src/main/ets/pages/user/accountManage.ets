@@ -3,13 +3,14 @@ import { HeadComponent } from '../../components/headComponent';
 import { accountItem } from '../../model/interface/userInterface';
 import { LongBtnComponent } from '../../components/longBtnComponent';
 import { LocalPreferences } from '../../service/LocalPreferences'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
 export struct AccountManage {
   @State accountList: Array<accountItem> = [
-    { name: '头像', value: '' },
-    { name: '账号', value: '' },
+    { name: 'account_manage_label_avatar', value: '' },
+    { name: 'account_manage_label_account', value: '' },
   ]
   @State accountImage: string = ''
   @State accountName: string = ''
@@ -29,7 +30,7 @@ export struct AccountManage {
     Stack({ alignContent: Alignment.BottomStart }) {
       Column() {
         HeadComponent({
-          headName: '账号管理',
+          headName: resStr(getContext(this), 'account_manage_head_name'),
           backUrl: 'pages/Index',
           tabs: 1
         })
@@ -37,10 +38,10 @@ export struct AccountManage {
           ForEach(this.accountList, (item: accountItem, index: number) => {
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
               Column() {
-                Text(item.name)
+                Text(resStr(getContext(this), item.name))
               }
 
-              if (item.name === '头像') {
+              if (item.name === 'account_manage_label_avatar') {
                 Flex({ justifyContent: FlexAlign.End, alignItems: ItemAlign.Center }) {
                   Column() {
                     Image(this.accountImage !== '' ? this.accountImage : $r('app.media.userAccount_headIcon'))
@@ -79,7 +80,7 @@ export struct AccountManage {
           btnColor: $r('app.color.background_color_over'),
           btnFontColor: $r('app.color.clear_font_color'),
           btnBorderColor: $r('app.color.CECECE'),
-          btnName: '退出账号',
+          btnName: resStr(getContext(this), 'account_manage_btn_logout'),
           onEvent: (data: string) => {
 
             console.info('退出账号', data)

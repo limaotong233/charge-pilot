@@ -4,6 +4,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { useToastHook } from '../service';
 import { enterDetail } from '../api/HomeApi';
 import { EnterDetailItem } from '../model/interface/api/HomeApiInterface';
+import { resStr } from '../utils/i18n'
 
 const TAG = 'HuaweiKitDemo'
 
@@ -25,10 +26,10 @@ export struct BottomNav {
             params: res
           })
         } else {
-          useToastHook('请扫描正确的二维码', '40lpx')
+          useToastHook(resStr(getContext(this), 'nav_scan_error'), '40lpx')
         }
       } else {
-        useToastHook('当前您未进站', '40lpx')
+        useToastHook(resStr(getContext(this), 'nav_not_entered'), '40lpx')
       }
     })
   }
@@ -40,7 +41,7 @@ export struct BottomNav {
           .width('20lpx')
           .height('20lpx')
           .margin({ top: '10lpx', bottom: '4lpx' })
-        Text('首页')
+        Text($r('app.string.nav_home'))
           .fontSize('10lpx')
           .fontColor(this.activeName === '首页' ? $r('app.color.bottom_nav_fontcolor_active') :
           $r('app.color.bottom_nav_fontcolor'))
@@ -56,7 +57,7 @@ export struct BottomNav {
           .width('32lpx')
           .height('32lpx')
           .margin({ top: '0lpx', bottom: '4lpx' })
-        Text('扫一扫')
+        Text($r('app.string.nav_scan'))
           .fontSize('10lpx')
           .fontColor(this.activeName === '扫一扫' ? $r('app.color.bottom_nav_fontcolor_active') :
           $r('app.color.bottom_nav_fontcolor'))
@@ -95,7 +96,7 @@ export struct BottomNav {
           .width('20lpx')
           .height('20lpx')
           .margin({ top: '10lpx', bottom: '4lpx' })
-        Text('我的')
+        Text($r('app.string.nav_mine'))
           .fontSize('10lpx')
           .fontColor(this.activeName === '我的' ? $r('app.color.bottom_nav_fontcolor_active') :
           $r('app.color.bottom_nav_fontcolor'))

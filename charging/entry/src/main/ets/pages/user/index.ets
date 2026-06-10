@@ -3,6 +3,7 @@ import { toosItem } from '../../model/interface/userInterface'
 import { CustomCustomerDialog } from './customer'
 import { LocalPreferences } from '../../service/LocalPreferences'
 import { geoLocationManager } from '@kit.LocationKit'
+import { resStr } from '../../utils/i18n'
 
 @Component
 export struct User {
@@ -30,21 +31,21 @@ export struct User {
   })
   @StorageProp('currentBreakpoint') curBp: string = 'sm'
   @State toolsList: Array<toosItem> = [
-    { type: 0, name: '查找站点', url: 'pages/home/siteSearch' },
-    { type: 1, name: '路线规划', url: 'pages/routePlanning/index' },
-    { type: 2, name: '站点收藏', url: 'pages/siteCollection/collectSpots' },
-    { type: 3, name: '卡券', url: 'pages/cardCoupons/index' },
-    { type: 4, name: '充电预约', url: 'pages/advanceCharging/index' },
-    { type: 5, name: '订单', url: 'pages/order/orderList' },
-    { type: 6, name: '充电教程', url: 'pages/tutorial/index' },
-    { type: 7, name: '客服', url: 'pages/BackgroundVoice' },
-    { type: 8, name: '充电统计', url: 'pages/analytics/index' },
+    { type: 0, name: 'user_tool_find_station', url: 'pages/home/siteSearch' },
+    { type: 1, name: 'user_tool_route_planning', url: 'pages/routePlanning/index' },
+    { type: 2, name: 'user_tool_station_collection', url: 'pages/siteCollection/collectSpots' },
+    { type: 3, name: 'user_tool_coupons', url: 'pages/cardCoupons/index' },
+    { type: 4, name: 'user_tool_advance_charging', url: 'pages/advanceCharging/index' },
+    { type: 5, name: 'user_tool_orders', url: 'pages/order/orderList' },
+    { type: 6, name: 'user_tool_charging_tutorial', url: 'pages/tutorial/index' },
+    { type: 7, name: 'user_tool_customer_service', url: 'pages/BackgroundVoice' },
+    { type: 8, name: 'user_tool_charging_analytics', url: 'pages/analytics/index' },
   ]
   @Prop accountImage: string // = LocalPreferences.get('accountImageUrl') as string
 
   async aboutToAppear() {
     let location = await geoLocationManager.getCurrentLocation();
-    AppStorage.setOrCreate('startSpot', '我的位置')
+    AppStorage.setOrCreate('startSpot', resStr(getContext(this), 'user_default_location'))
     AppStorage.setOrCreate('startSpotLocation', location)
     AppStorage.setOrCreate('endSpot', '')
     AppStorage.setOrCreate('endSpotLocation', null)
@@ -68,7 +69,7 @@ export struct User {
               .width('100%')
 
               Row() {
-                Text('账号管理')
+                Text($r('app.string.user_btn_account_manage'))
                   .fontSize('12lpx')
               }
               .borderRadius('16lpx')
@@ -107,7 +108,7 @@ export struct User {
         })
 
         Row() {
-          Text('常用工具')
+          Text($r('app.string.user_label_common_tools'))
         }
         .width('100%')
         .margin({ top: '24lpx', bottom: '13lpx' })
@@ -124,7 +125,7 @@ export struct User {
                 .width('24lpx')
                 .height('24lpx')
                 .margin({ bottom: '8lpx', left: '17lpx', right: '17lpx' })
-              Text(this.toolsList[index].name)
+              Text(resStr(getContext(this), this.toolsList[index].name))
                 .fontSize('12lpx')
                 .fontColor($r('app.color.bottom_nav_fontcolor'))
             }
