@@ -6,6 +6,7 @@ import { useToastHook } from '../../service'
 import { login, getUserInfo } from '../../api/LoginApi'
 import { LocalPreferences } from '../../service/LocalPreferences'
 import { ResultVO } from '../../utils/Http'
+import { resStr } from '../../utils/i18n'
 
 @Entry
 @Component
@@ -25,7 +26,7 @@ export struct Login {
 
   private validateUsername(value: string) {
     if (!value) {
-      this.errors.account = '账号不能为空'
+      this.errors.account = resStr(getContext(this), 'login_error_account_empty')
     } else {
       this.errors.account = undefined
     }
@@ -33,7 +34,7 @@ export struct Login {
 
   private validatePassword(value: string) {
     if (!value) {
-      this.errors.password = '密码不能为空'
+      this.errors.password = resStr(getContext(this), 'login_error_password_empty')
     } else {
       this.errors.password = undefined
     }
@@ -94,12 +95,12 @@ export struct Login {
             .margin({ top: '44lpx', bottom: '56lpx' })
           Column() {
             Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Text('账号')
+              Text($r('app.string.login_label_account'))
                 .width('48lpx')
 
               TextInput({
                 text: this.form.account,
-                placeholder: this.errors.account ? this.errors.account : '请输入账号'
+                placeholder: this.errors.account ? this.errors.account : $r('app.string.login_placeholder_account')
               })
                 .height('40lpx')
                 .placeholderFont({
@@ -118,12 +119,12 @@ export struct Login {
             .borderColor({ bottom: $r('app.color.EEEEEE') })
 
             Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Text('密码')
+              Text($r('app.string.login_label_password'))
                 .width('48lpx')
 
               TextInput({
                 text: this.form.password,
-                placeholder: this.errors.password ? this.errors.password : '请输入密码'
+                placeholder: this.errors.password ? this.errors.password : $r('app.string.login_placeholder_password')
               })
                 .height('40lpx')
                 .placeholderFont({
@@ -148,7 +149,7 @@ export struct Login {
             btnColor: $r('app.color.longBtn_blue'),
             btnFontColor: $r('app.color.background_color_over'),
             btnBorderColor: $r('app.color.longBtn_blue'),
-            btnName: '登录账号',
+            btnName: resStr(getContext(this), 'login_btn_submit'),
             onEvent: (data: string) => {
               if (this.validateForm()) {
                 this.loginApp()
@@ -158,10 +159,10 @@ export struct Login {
 
           // 没有账号，去注册
           Row() {
-            Text('没有账号？')
+            Text($r('app.string.login_no_account'))
               .fontSize('14lpx')
               .fontColor($r('app.color.999999'))
-            Text('去注册')
+            Text($r('app.string.login_go_register'))
               .fontSize('14lpx')
               .fontColor('#2196F3')
               .margin({ left: '4lpx' })
