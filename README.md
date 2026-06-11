@@ -7,9 +7,9 @@
   <img src="assets/screenshot-02.png" width="18%" />
   <img src="assets/screenshot-03.png" width="18%" />
   <img src="assets/screenshot-04.png" width="18%" />
-  <img src="assets/screenshot-05.png" width="18%" />
-  <img src="assets/screenshot-06.png" width="18%" />
+  <img src="assets/web.png" width="100%" />
 </p>
+
 
 
 

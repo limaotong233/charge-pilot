@@ -16,6 +16,7 @@ import { EnterDetailItem } from '../model/interface/api/HomeApiInterface';
 import { OrderListReturning } from '../model/interface/api/OrderApiInterface';
 import { useToastHook } from '../service';
 import { ResultVO } from '../utils/Http';
+import { VoiceAssistant } from '../components/VoiceAssistant';
 
 @Entry
 @Component
@@ -124,47 +125,53 @@ struct Index {
 
   build() {
     if (this.curBp === 'sm') {
-      Column() {
-        Tabs({ barPosition: BarPosition.End, index: this.currentIndex, controller: this.tasController }) {
-          TabContent() {
-            Column() {
-              if (!this.continueLoading) {
-                Home({
-                  currentIndex: this.currentIndex,
-                })
-              }
-              if (this.continueLoading) {
-                LoadingCustomDialog({
-                  dialogTitle: this.chargingBtnName,
-                  autoCancel: true,
-                  closeDialog: this.closeDialog
-                })
+      Stack({ alignContent: Alignment.BottomEnd }) {
+        Column() {
+          Tabs({ barPosition: BarPosition.End, index: this.currentIndex, controller: this.tasController }) {
+            TabContent() {
+              Column() {
+                if (!this.continueLoading) {
+                  Home({
+                    currentIndex: this.currentIndex,
+                  })
+                }
+                if (this.continueLoading) {
+                  LoadingCustomDialog({
+                    dialogTitle: this.chargingBtnName,
+                    autoCancel: true,
+                    closeDialog: this.closeDialog
+                  })
+                }
               }
             }
-          }
 
-          TabContent() {
-            User({
-              accountImage: this.accountImage
-            })
+            TabContent() {
+              User({
+                accountImage: this.accountImage
+              })
+            }
           }
+          .scrollable(false)
+          .barOverlap(true)
+          .barHeight('0lpx')
+
+          BottomNav({
+            activeName: this.activeName,
+            currentIndex: this.currentIndex,
+            onEvent: (data: string, index: number) => {
+              console.info('navdata', data)
+              console.info('navindex', index)
+              this.activeName = data
+              this.currentIndex = index
+              this.tasController.changeIndex(index)
+            }
+          })
+            .position({ bottom: 0 })
         }
-        .scrollable(false)
-        .barOverlap(true)
-        .barHeight('0lpx')
+        .height('100%')
+        .width('100%')
 
-        BottomNav({
-          activeName: this.activeName,
-          currentIndex: this.currentIndex,
-          onEvent: (data: string, index: number) => {
-            console.info('navdata', data)
-            console.info('navindex', index)
-            this.activeName = data
-            this.currentIndex = index
-            this.tasController.changeIndex(index)
-          }
-        })
-          .position({ bottom: 0 })
+        VoiceAssistant()
       }
       .height('100%')
       .width('100%')

@@ -16,6 +16,7 @@ import { Tmp } from '../../model/class';
 import { getStationDetail } from '../../api/HomeApi';
 import { JSON } from '@kit.ArkTS';
 import { resStr } from '../../utils/i18n';
+import { router } from '@kit.ArkUI';
 
 let dataBase = DataBaseService.getInstance()
 
@@ -129,6 +130,14 @@ export struct SiteSearch {
     this.tab2 = resStr(getContext(this), 'search_tab_collect')
     this.tabName = this.tab1
     this.carStatus = resStr(getContext(this), 'common_go_to')
+    // 读取路由参数，支持语音助手预填关键词
+    const params = router.getParams() as Record<string, string>
+    if (params && params['keyword']) {
+      this.keyWord = params['keyword']
+      // 切到收藏tab，触发搜索接口
+      this.tabName = this.tab2
+      this.getCollectList()
+    }
     // 避免耗时接口
     hiTraceMeter.startTrace('getStringSyncAfter', 1)
     this.getUIContext().getHostContext()!.resourceManager.getStringSync($r('app.string.test'))

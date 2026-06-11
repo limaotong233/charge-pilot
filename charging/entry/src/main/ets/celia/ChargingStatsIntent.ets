@@ -13,14 +13,7 @@ const LOG_TAG = 'CeliaChargingStats'
   llmDescription: '帮助用户查看充电数据统计，包括总充电量、消费金额、充电次数、碳减排量、常去充电站等数据分析',
   keywords: ['充电统计', '充电数据', '充了多少电', '充电分析', '消费统计', '碳减排'],
   abilityName: 'EntryAbility',
-  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND],
-  parameters: {
-    'schema': 'http://json-schema.org/draft-07/schema#',
-    'type': 'object',
-    'title': 'ChargingStatsParams',
-    'description': '充电统计参数',
-    'properties': {}
-  }
+  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND]
 })
 export default class ChargingStatsIntent extends InsightIntentEntryExecutor<string> {
   onExecute(): Promise<insightIntent.IntentResult<string>> {
@@ -28,6 +21,7 @@ export default class ChargingStatsIntent extends InsightIntentEntryExecutor<stri
     if (this.executeMode === insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND) {
       this.windowStage?.loadContent('pages/analytics/index')
     }
-    return Promise.resolve({ code: 0, result: '已打开充电统计' })
+    const result: insightIntent.IntentResult<string> = { code: 0, result: '已打开充电统计' }
+    return Promise.resolve(result)
   }
 }

@@ -13,19 +13,7 @@ const LOG_TAG = 'CeliaSearchStation'
   llmDescription: '帮助用户搜索附近的电动汽车充电站，打开地图页面展示充电站列表',
   keywords: ['搜索充电站', '找充电桩', '附近充电站', '充电站', '找充电', '搜索充电桩', '附近充电桩'],
   abilityName: 'EntryAbility',
-  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND],
-  parameters: {
-    'schema': 'http://json-schema.org/draft-07/schema#',
-    'type': 'object',
-    'title': 'SearchStationParams',
-    'description': '搜索充电站参数',
-    'properties': {
-      'keyword': {
-        'type': 'string',
-        'description': '搜索关键词，如充电站名称或区域名称'
-      }
-    }
-  }
+  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND]
 })
 export default class SearchStationIntent extends InsightIntentEntryExecutor<string> {
   keyword: string = ''
@@ -36,6 +24,7 @@ export default class SearchStationIntent extends InsightIntentEntryExecutor<stri
     if (this.executeMode === insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND) {
       this.windowStage?.loadContent('pages/Index')
     }
-    return Promise.resolve({ code: 0, result: '已打开充电站搜索' })
+    const result: insightIntent.IntentResult<string> = { code: 0, result: '已打开充电站搜索' }
+    return Promise.resolve(result)
   }
 }

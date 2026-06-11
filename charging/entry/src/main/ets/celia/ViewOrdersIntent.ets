@@ -13,20 +13,7 @@ const LOG_TAG = 'CeliaViewOrders'
   llmDescription: '帮助用户查看充电订单记录，包括进行中、待支付、已完成的订单',
   keywords: ['查看订单', '充电记录', '我的订单', '订单列表', '充电历史', '消费记录'],
   abilityName: 'EntryAbility',
-  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND],
-  parameters: {
-    'schema': 'http://json-schema.org/draft-07/schema#',
-    'type': 'object',
-    'title': 'ViewOrdersParams',
-    'description': '查看订单参数',
-    'properties': {
-      'status': {
-        'type': 'string',
-        'description': '订单状态筛选：all=全部, pending=待支付, completed=已完成',
-        'enum': ['all', 'pending', 'completed']
-      }
-    }
-  }
+  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND]
 })
 export default class ViewOrdersIntent extends InsightIntentEntryExecutor<string> {
   status: string = 'all'
@@ -36,6 +23,7 @@ export default class ViewOrdersIntent extends InsightIntentEntryExecutor<string>
     if (this.executeMode === insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND) {
       this.windowStage?.loadContent('pages/order/orderList')
     }
-    return Promise.resolve({ code: 0, result: '已打开订单列表' })
+    const result: insightIntent.IntentResult<string> = { code: 0, result: '已打开订单列表' }
+    return Promise.resolve(result)
   }
 }

@@ -26,6 +26,13 @@ export class OrderService {
     const orderNo = `OC${Date.now()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`
     const seconds = 3600 // 默认充电时长限制 1 小时
 
+    // 读取充电桩的费率和功率，写入订单
+    const [port] = await db
+      .select({ chargeFee: ports.chargeFee, chargePower: ports.chargePower })
+      .from(ports)
+      .where(eq(ports.id, body.portId))
+      .limit(1)
+
     const [order] = await db.insert(orders).values({
       orderNo,
       userId,
@@ -37,6 +44,8 @@ export class OrderService {
       orderStatus: 0,
       initialValue: 20, // 默认起始SOC
       soc: 20,
+      chargeFee: port?.chargeFee || '0.50',
+      chargePower: port?.chargePower || '0',
       userName,
       startTime: new Date(),
     }).returning({ id: orders.id })
@@ -146,8 +155,9 @@ export class OrderService {
     if (!order) throw new Error('订单不存在')
 
     // 计算充电金额：充电量 * 电费单价
-    const capacity = parseFloat(order.chargeCapacity || '0')
-    const fee = parseFloat(order.chargeFee || '0.5')
+    // 兼容历史数据：新订单 chargeFee 已在创建时从充电桩写入，旧订单可能为 null
+    const capacity = Number(order.chargeCapacity) || 0
+    const fee = Number(order.chargeFee) || 0.5
     const amount = (capacity * fee).toFixed(2)
 
     await db.update(orders)

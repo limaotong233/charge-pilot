@@ -15,19 +15,7 @@ const LOG_TAG = 'CeliaStartCharging'
   llmDescription: '帮助用户开始充电。如果用户已在充电站内，直接进入充电流程；否则打开地图让用户选择充电站',
   keywords: ['开始充电', '我要充电', '启动充电', '充电', '开始充'],
   abilityName: 'EntryAbility',
-  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND],
-  parameters: {
-    'schema': 'http://json-schema.org/draft-07/schema#',
-    'type': 'object',
-    'title': 'StartChargingParams',
-    'description': '开始充电参数',
-    'properties': {
-      'stationId': {
-        'type': 'string',
-        'description': '充电站ID，如果不指定则使用当前所在充电站'
-      }
-    }
-  }
+  executeMode: [insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND]
 })
 export default class StartChargingIntent extends InsightIntentEntryExecutor<string> {
   stationId: string = ''
@@ -42,13 +30,15 @@ export default class StartChargingIntent extends InsightIntentEntryExecutor<stri
       if (this.executeMode === insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND) {
         this.windowStage?.loadContent('pages/charging/inCharging')
       }
-      return Promise.resolve({ code: 0, result: '正在跳转到充电页面' })
+      const result: insightIntent.IntentResult<string> = { code: 0, result: '正在跳转到充电页面' }
+      return Promise.resolve(result)
     }
 
     // 没有进行中的订单，打开首页让用户选择充电站
     if (this.executeMode === insightIntent.ExecuteMode.UI_ABILITY_FOREGROUND) {
       this.windowStage?.loadContent('pages/Index')
     }
-    return Promise.resolve({ code: 0, result: '请先选择充电站和充电桩' })
+    const result: insightIntent.IntentResult<string> = { code: 0, result: '请先选择充电站和充电桩' }
+    return Promise.resolve(result)
   }
 }
