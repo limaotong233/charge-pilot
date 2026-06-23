@@ -116,15 +116,23 @@ npm run dev          # 开发模式（热重启，默认端口 3000）
 
 用 DevEco Studio 打开 `charging/` 目录。
 
-#### 2. 确认后端地址
+#### 2. 配置服务端地址
 
-打开 `charging/entry/src/main/ets/utils/Http.ets`，确认 `baseUrl` 指向后端地址：
+客户端支持**在 APP 内动态配置**服务端 IP，无需修改代码重新编译：
 
-```typescript
-const baseUrl: string = 'http://192.168.x.x:3000'
-```
+**方式一：登录页配置**
 
-> 模拟器使用 `localhost`，真机需改为电脑的局域网 IP。
+在登录页底部点击「服务器设置」，输入后端服务器 IP（四段式），点击保存即可。
+
+**方式二：应用内配置**
+
+登录后进入「我的 → 账号管理」，在服务器地址区域修改 IP 并保存。
+
+> 默认地址为 `192.168.1.121:3000`，如后端部署在其他机器，只需在 APP 内修改 IP 即可，无需重新编译。
+>
+> 模拟器使用 `10.0.2.2`（Android 模拟器访问宿主机）或 `localhost`。
+>
+> 局域网内其他设备访问后端管理面板：`http://<后端IP>:3000/admin`（需关闭 Windows 防火墙或放行 3000 端口）。
 
 #### 3. 构建运行
 
@@ -160,6 +168,15 @@ hvigorw assembleHap -p module=entry    # 构建 HAP 包
 | "查看订单" | 打开订单列表 |
 | "导航去充电站" | 打开路线规划 |
 | "充电统计" | 打开数据分析看板 |
+
+### AI 语音助手
+
+内置语音助手（首页左下角悬浮 MIC 按钮），基于鸿蒙原生 `CoreSpeechKit` 实现：
+
+- **ASR 语音识别** — `speechRecognizer` 离线引擎，按住说话
+- **TTS 语音播报** — 匹配成功后自动播报反馈
+- **关键词意图匹配** — 6 组指令关键词，命中后自动跳转对应页面
+- **快捷标签** — 面板底部可点击标签，无需语音直接执行
 
 ### 后端
 
@@ -213,4 +230,4 @@ hvigorw assembleHap -p module=entry    # 构建 HAP 包
 | 数据库 | PostgreSQL + Drizzle ORM |
 | 认证 | JWT（jsonwebtoken + bcrypt） |
 | 管理面板 | 纯 HTML + CSS + JS（Express 静态托管） |
-| 语音控制 | HarmonyOS InsightIntent + 小艺智能体 |
+| 语音控制 | HarmonyOS InsightIntent + 小艺智能体 + 内置 AI 语音助手（ASR + TTS） |

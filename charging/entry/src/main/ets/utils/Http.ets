@@ -40,7 +40,8 @@ export const request = async<T, K>(params: RequestParams<K>): Promise<T> => {
   }
   const rpcSession = rcp.createSession({ requestConfiguration: requestConfig })
 
-  const baseUrl: string = 'http://192.168.1.118:3000';
+  const serverIp = LocalPreferences.get('serverIp') as string || '192.168.1.121'
+  const baseUrl: string = `http://${serverIp}:3000`
   let url = baseUrl + params.url;
 
   if (params.method === http.RequestMethod.GET) {

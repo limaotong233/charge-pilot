@@ -16,6 +16,22 @@ export struct Login {
     password: LocalPreferences.get('accountPassword') as string || ''
   }
   @State errors: errorsItem = { account: '', password: '' }
+  @State showServerConfig: boolean = false
+  @State ip1: string = ''
+  @State ip2: string = ''
+  @State ip3: string = ''
+  @State ip4: string = ''
+
+  aboutToAppear() {
+    const savedIp = (LocalPreferences.get('serverIp') as string) || '192.168.1.121'
+    const parts = savedIp.split('.')
+    if (parts.length === 4) {
+      this.ip1 = parts[0]
+      this.ip2 = parts[1]
+      this.ip3 = parts[2]
+      this.ip4 = parts[3]
+    }
+  }
 
   private validateForm(): boolean {
     this.validateUsername(this.form.account)
@@ -171,6 +187,84 @@ export struct Login {
               })
           }
           .margin({ top: '16lpx' })
+
+          // 服务器设置
+          Text('服务器设置')
+            .fontSize('12lpx')
+            .fontColor('#999999')
+            .margin({ top: '24lpx' })
+            .onClick(() => {
+              this.showServerConfig = !this.showServerConfig
+            })
+
+          if (this.showServerConfig) {
+            Column() {
+              Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
+                TextInput({ text: this.ip1, placeholder: '192' })
+                  .type(InputType.PhoneNumber)
+                  .textAlign(TextAlign.Center)
+                  .backgroundColor('#F5F5F5')
+                  .borderRadius('8lpx')
+                  .width('56lpx')
+                  .height('36lpx')
+                  .fontSize('14lpx')
+                  .onChange((v: string) => { this.ip1 = v })
+                Text('.').fontSize('18lpx').fontWeight(FontWeight.Bold).margin({ left: '3lpx', right: '3lpx' })
+                TextInput({ text: this.ip2, placeholder: '168' })
+                  .type(InputType.PhoneNumber)
+                  .textAlign(TextAlign.Center)
+                  .backgroundColor('#F5F5F5')
+                  .borderRadius('8lpx')
+                  .width('56lpx')
+                  .height('36lpx')
+                  .fontSize('14lpx')
+                  .onChange((v: string) => { this.ip2 = v })
+                Text('.').fontSize('18lpx').fontWeight(FontWeight.Bold).margin({ left: '3lpx', right: '3lpx' })
+                TextInput({ text: this.ip3, placeholder: '1' })
+                  .type(InputType.PhoneNumber)
+                  .textAlign(TextAlign.Center)
+                  .backgroundColor('#F5F5F5')
+                  .borderRadius('8lpx')
+                  .width('56lpx')
+                  .height('36lpx')
+                  .fontSize('14lpx')
+                  .onChange((v: string) => { this.ip3 = v })
+                Text('.').fontSize('18lpx').fontWeight(FontWeight.Bold).margin({ left: '3lpx', right: '3lpx' })
+                TextInput({ text: this.ip4, placeholder: '121' })
+                  .type(InputType.PhoneNumber)
+                  .textAlign(TextAlign.Center)
+                  .backgroundColor('#F5F5F5')
+                  .borderRadius('8lpx')
+                  .width('56lpx')
+                  .height('36lpx')
+                  .fontSize('14lpx')
+                  .onChange((v: string) => { this.ip4 = v })
+              }
+              .margin({ top: '8lpx' })
+
+              Text('保存')
+                .fontSize('13lpx')
+                .fontColor(Color.White)
+                .backgroundColor('#4f6ef7')
+                .borderRadius('8lpx')
+                .textAlign(TextAlign.Center)
+                .width('180lpx')
+                .height('32lpx')
+                .margin({ top: '10lpx' })
+                .onClick(() => {
+                  if (this.ip1.length > 0 && this.ip2.length > 0 && this.ip3.length > 0 && this.ip4.length > 0) {
+                    const ip = `${this.ip1}.${this.ip2}.${this.ip3}.${this.ip4}`
+                    LocalPreferences.put('serverIp', ip)
+                    LocalPreferences.flush()
+                    this.showServerConfig = false
+                    useToastHook(`已更新为 ${ip}`, '32lpx')
+                  } else {
+                    useToastHook('请填写完整 IP', '32lpx')
+                  }
+                })
+            }
+            .margin({ top: '8lpx' })
+          }
         }
         .width('100%')
         .height('100%')

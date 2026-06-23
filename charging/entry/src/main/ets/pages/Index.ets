@@ -180,9 +180,14 @@ struct Index {
       Row() {
         LeftNav({
           activeName: this.activeName,
+          currentIndex: this.currentIndex,
           onEvent: (data: string, index: number) => {
             console.info('navdata', data)
-            console.info('navindex', index)
+            this.activeName = data
+            if (index >= 0) {
+              this.currentIndex = index
+              this.tasController.changeIndex(index)
+            }
           }
         })
           .zIndex(1)
@@ -211,7 +216,6 @@ struct Index {
             })
           }
         }
-        // .position({top: '0lpx', left:'108lpx'})
         .scrollable(false)
         .barOverlap(true)
         .barHeight('0lpx')
